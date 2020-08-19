@@ -9,6 +9,7 @@
     right: -45px;
     .circle {
       padding-left: 16px;
+      background-color: var(--border-color);
     }
   }
   &.open {
@@ -24,12 +25,13 @@
     font-size: 12px;
     padding: 16px;
     padding-left: 10px;
-    background-color: white;
+    background-color: var(--bg-base);
     // TODO - @oded - unify with other shadows. this shadow is different. talk to amir
     box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.09), 0 1px 2px 0 rgba(0, 0, 0, 0.23);
     border-top-right-radius: 50%;
     border-bottom-right-radius: 50%;
-    transition: padding 300ms ease-in-out;
+    color: var(--text-muted);
+    transition: padding-left 300ms, background-color 300ms ease-in-out;
     > div {
       transition: transform 300ms ease-in-out;
     }

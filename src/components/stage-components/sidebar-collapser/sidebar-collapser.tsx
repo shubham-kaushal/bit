@@ -7,10 +7,9 @@ type CollapserProps = {
   isOpen: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export function Collapser({ isOpen, onClick, ...rest }: CollapserProps) {
-  console.log('isOpen', isOpen);
+export function Collapser({ isOpen, onClick, className, ...rest }: CollapserProps) {
   return (
-    <div {...rest} onClick={onClick} className={classNames(styles.collapser, { [styles.open]: isOpen })}>
+    <div {...rest} onClick={onClick} className={classNames(styles.collapser, className, { [styles.open]: isOpen })}>
       <div className={styles.circle}>
         <div>
           <Icon of="right-rounded-corners" />

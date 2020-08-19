@@ -3,7 +3,7 @@
   overflow: hidden;
   min-height: 32px;
 }
-.drawerName {
+.drawerNameContainer {
   font-size: var(--p-xxs);
   height: 32px;
   display: flex;
@@ -22,6 +22,15 @@
   &:hover {
     border-color: var(--bg-topping-highlight);
     background: var(--bg-topping-highlight);
+    .icon {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  > div {
+    min-width: 0;
+    display: flex;
+    align-items: center;
   }
   .arrow {
     display: inline-block;
@@ -29,11 +38,31 @@
     line-height: inherit;
     transition: transform 300ms;
     margin-right: 10px;
-    color: var(--text-muted);
+    color: #878c9a;
     &.collapsed {
       transform: rotate(-0.25turn);
     }
   }
+  .icon {
+    padding: 5px;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 300ms, opacity 300ms ease-in-out;
+    color: #878c9a;
+    &:hover {
+      color: var(--text-highlight);
+    }
+    &:active {
+      color: var(--base-highlight);
+    }
+  }
+}
+
+.drawerName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
 }
 
 .drawerContent {

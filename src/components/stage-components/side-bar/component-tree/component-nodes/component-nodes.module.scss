@@ -25,7 +25,7 @@
     line-height: inherit;
     transition: transform 400ms;
     margin-right: 10px;
-    color: var(--text-muted);
+    color: #878c9a;
     [data-collapsed='true'] & {
       transform: rotate(-0.25turn);
     }
