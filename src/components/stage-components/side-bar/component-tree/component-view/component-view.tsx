@@ -7,13 +7,10 @@ import { ComponentTreeContext } from '../component-tree-context';
 import { indentClass } from '../indent';
 import { getName } from '../utils/get-name';
 import { clickable } from '../../../../../to-eject/css-components/clickable';
-import { hoverable } from '../../../../../to-eject/css-components/hoverable';
 import { PayloadType } from '../payload-type';
 import { NavLink } from '../../../../../extensions/react-router/nav-link';
-// import { ComponentStatusResolver } from '../component-status-resolver';
-// import { StatusTooltip } from '../component-tooltip';
-import styles from './component-view.module.scss';
 import { ComponentTreeSlot } from '../../../../../extensions/component-tree/component-tree.ui';
+import styles from './component-view.module.scss';
 
 export type ComponentViewProps<Payload = any> = {
   treeNodeSlot: ComponentTreeSlot;
@@ -38,7 +35,7 @@ export function ComponentView(props: ComponentViewProps<PayloadType>) {
   return (
     <NavLink
       href={`/${node.id}`}
-      className={classNames(indentClass, clickable, hoverable, styles.component)}
+      className={classNames(indentClass, clickable, styles.component)}
       activeClassName={styles.active}
       onClick={handleClick}
     >
