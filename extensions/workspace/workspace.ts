@@ -783,6 +783,8 @@ export class Workspace implements ComponentFactory {
     return this.defaultDirectory;
   }
 
+  private defaultScopeFromRootDir() {}
+
   /**
    * Transform the id to ComponentId and get the exact id as appear in bitmap
    *
@@ -790,30 +792,11 @@ export class Workspace implements ComponentFactory {
    * @returns {Promise<ComponentID>}
    * @memberof Workspace
    */
-  async resolveComponentId(
-    id: string | ComponentID | BitId,
-    assumeIdWithScope = false,
-    useVersionFromBitmap = true
-  ): Promise<ComponentID> {
-    if (!assumeIdWithScope) {
-      const legacyId = this.consumer.getParsedId(id.toString(), useVersionFromBitmap);
-      return ComponentID.fromLegacy(legacyId);
-    }
-    // remove the scope before search in bitmap
-    let stringIdWithoutScope;
-    // let scope;
-    if (typeof id === 'string') {
-      const _id = BitId.parse(id, true);
-      stringIdWithoutScope = _id.toStringWithoutScope();
-      // scope = _id.scope;
-    } else if (id instanceof BitId) {
-      stringIdWithoutScope = id.toStringWithoutScope();
-      // scope = id.scope;
-    } else {
-      stringIdWithoutScope = id._legacy.toStringWithoutScope();
-      // scope = id.scope;
-    }
-    const legacyId = this.consumer.getParsedId(stringIdWithoutScope, useVersionFromBitmap);
+  async resolveComponentId(id: string | ComponentID | BitId): Promise<ComponentID> {
+    // const defaultScope = this.componentDefaultScope(id);
+    const legacyId = this.consumer.getParsedId(id.toString(), true);
+    const defaultScope = this.defaultScopeFromRootDir();
+    // const legacyId = this.consumer.getParsedId(stringIdWithoutScope, useVersionFromBitmap);
     return ComponentID.fromLegacy(legacyId);
   }
 
