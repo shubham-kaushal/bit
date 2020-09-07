@@ -1,3 +1,8 @@
+import { readdir, readdirSync } from 'fs-extra';
+import assert from 'assert';
+
+import './hook-require';
+
 import { AspectAspect } from '@teambit/aspect';
 import AspectLoaderAspect from '@teambit/aspect-loader';
 import { BuilderAspect } from '@teambit/builder';
@@ -83,6 +88,67 @@ export const manifestsMap = {
   [CacheAspect.id]: CacheAspect,
   [ChangelogAspect.id]: ChangelogAspect,
 };
+// /Users/uritalyosef/Desktop/BIT/HarminyBit/bit/node_modules/@teambit/
+// const dirPath = '../node_modules/@teambit';
+const dirPath = '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/node_modules/@teambit';
+// const dirPath = '../';
+const files = readdirSync(dirPath);
+// console.log('--> ', files)
+// const runtimeFile = files.find((file) => file.includes(`.${runtime}.runtime.js`)) || null;
+// this.constructor._load(path, this);
+
+// const boot = () => {
+
+/*
+  export async function requireAspects(aspect: Extension, runtime: RuntimeDefinition) {
+  const id = aspect.name;
+  if (!id) throw new Error('could not retrieve aspect id');
+  const dirPath = getAspectDir(id);
+  const files = await readdir(dirPath);
+  const runtimeFile = files.find((file) => file.includes(`.${runtime.name}.runtime.js`));
+  if (!runtimeFile) return;
+  // eslint-disable-next-line
+  require(resolve(`${dirPath}/${runtimeFile}`));
+}
+
+const bitAspect filter
+
+*/
+
+const bitAspectFilter = (aspectPath) => {
+  const files = readdirSync(aspectPath);
+  const aspectName = aspectPath.split('/').pop();
+  return !!files.find((file) => file.includes(`.${aspectName}.runtime.js`));
+};
+
+function boot() {
+  console.log('---33---> ', bitAspectFilter(files[0]));
+
+  return (
+    files
+      // .filter((file) => file.includes(`.${runtime.name}.runtime.js`)
+      .filter((file) => bitAspectFilter(`${dirPath}/${file}`))
+      .reduce((manifestsMap, aspectName) => {
+        let path = `@teambit/${aspectName}`;
+        // assert(typeof path === 'string', 'path must be a string');
+        // assert(path, 'missing path');
+
+        console.log('---2---> ', aspectName);
+
+        if (path.includes('base-ui.constants.storage')) {
+          return manifestsMap;
+        }
+
+        let aspect = require(path);
+        // let aspect = constructor._load(path, this);
+        // let aspect = this.constructor._load(path, this);
+        // manifestsMap[aspect.id] = aspect;
+        return manifestsMap;
+      }, {})
+  );
+}
+
+console.log('---->, ', boot());
 
 export function isCoreAspect(id: string) {
   const _reserved = [BitAspect.id, ConfigAspect.id];
