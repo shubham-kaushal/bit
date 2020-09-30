@@ -1,5 +1,6 @@
 import { Slot, SlotRegistry } from '@teambit/harmony';
-
+import PubsubAspect, { PubsubUI, BitBaseEvent } from '@teambit/pubsub';
+import { ClickInsideAnIframeEvent } from './events';
 import { PreviewNotFound } from './exceptions';
 import { PreviewType } from './preview-type';
 import { PreviewAspect, PreviewRuntime } from './preview.aspect';
@@ -18,8 +19,14 @@ export class PreviewPreview {
     /**
      * preview slot.
      */
-    private previewSlot: PreviewSlot
-  ) {}
+    private previewSlot: PreviewSlot,
+    /**
+     * register to pubsub
+     */
+    private pubsub: PubsubUI
+  ) {
+    this.clickPubSub();
+  }
 
   /**
    * render the preview.
@@ -44,6 +51,16 @@ export class PreviewPreview {
 
     return preview.render(componentId, PREVIEW_MODULES[name], includes);
   };
+
+  clickPubSub() {
+    const pub = this.pubsub;
+    window.addEventListener('click', (e) => {
+      console.log('clicked pub', pub);
+      const timestamp = Date.now().toString();
+      const clickEvent = Object.assign({}, e);
+      this.pubsub.pub(PreviewAspect.id, new ClickInsideAnIframeEvent(timestamp, clickEvent));
+    });
+  }
 
   /**
    * register a new preview.
@@ -86,9 +103,10 @@ export class PreviewPreview {
 
   static slots = [Slot.withType<PreviewType>()];
 
-  static async provider(deps, config, [previewSlot]: [PreviewSlot]) {
-    const preview = new PreviewPreview(previewSlot);
+  // static dependencies = [PubsubAspect];
 
+  static async provider(deps, config, [previewSlot, pubsub]: [PreviewSlot, PubsubUI]) {
+    const preview = new PreviewPreview(previewSlot, pubsub);
     window.addEventListener('hashchange', () => {
       preview.render();
     });

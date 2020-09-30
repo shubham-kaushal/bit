@@ -20,12 +20,13 @@ export type MenuProps = {
   navigationSlot: OrderedNavigationSlot;
   widgetSlot?: NavigationSlot; // currently not used but widget slots will be used in the remote scope for downloads, likes etc. so left it for now
   host: string;
+  pubsub: any;
 };
 
 /**
  * top bar menu.
  */
-export function Menu({ navigationSlot, widgetSlot, className, host }: MenuProps) {
+export function Menu({ navigationSlot, widgetSlot, className, host, pubsub }: MenuProps) {
   const { component } = useComponent(host);
   if (!component) return <FullLoader />;
 
@@ -41,7 +42,7 @@ export function Menu({ navigationSlot, widgetSlot, className, host }: MenuProps)
         <MenuNav navigationSlot={navigationSlot} />
       </div>
       <div className={styles.rightSide}>
-        <VersionDropdown versions={versionList} currentVersion={component.version} />
+        <VersionDropdown versions={versionList} pubsub={pubsub} currentVersion={component.version} />
         {/* <span className={styles.widget}>
           <Icon className={classnames(styles.icon)} of="dependency" />
         </span> */}

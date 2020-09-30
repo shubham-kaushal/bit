@@ -5,4 +5,6 @@ export type { PreviewPreview } from './preview.preview.runtime';
 export { PreviewDefinition } from './preview-definition';
 export { ComponentPreview } from './ui';
 export { PreviewAspect, PreviewRuntime };
+export * from './events';
+
 export default PreviewAspect;

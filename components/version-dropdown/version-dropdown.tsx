@@ -1,8 +1,8 @@
-// import { Icon } from '@teambit/evangelist.elements.icon';
-// import { Dropdown } from '@teambit/evangelist.surfaces.dropdown';
+import { Icon } from '@teambit/evangelist.elements.icon';
+import { Dropdown } from '@teambit/evangelist.surfaces.dropdown';
 import { PillLabel } from '@teambit/staged-components.pill-label';
-// import { VersionLabel } from '@teambit/staged-components.workspace-sections.version-label';
-// import { hoverable } from 'bit-bin/dist/to-eject/css-components/hoverable';
+import { VersionLabel } from '@teambit/staged-components.workspace-sections.version-label';
+import { hoverable } from 'bit-bin/dist/to-eject/css-components/hoverable';
 import classNames from 'classnames';
 import React from 'react';
 
@@ -11,6 +11,7 @@ import styles from './version-dropdown.module.scss';
 type VersionDropdownProps = {
   versions: string[];
   currentVersion?: string;
+  pubsub: any;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export function VersionDropdown({ versions, currentVersion }: VersionDropdownProps) {
@@ -23,18 +24,19 @@ export function VersionDropdown({ versions, currentVersion }: VersionDropdownPro
   }
   return (
     <div className={styles.versionDropdown}>
-      {/* <Dropdown
+      <Dropdown
         className={styles.dropdown}
         dropClass={styles.menu}
         placeholder=""
-        clickToggles
-        clickOutside
-        PlaceholderComponent={() => ( */}
-      <div>
-        {/* <div className={styles.overlay} /> */}
-        <VersionPlaceholder currentVersion={currentVersion} />
-      </div>
-      {/* )}
+        clickToggles={false}
+        clickOutside={false}
+        // open={true}
+        PlaceholderComponent={() => (
+          <div>
+            {/* <div className={styles.overlay} /> */}
+            <VersionPlaceholder currentVersion={currentVersion} />
+          </div>
+        )}
       >
         <div>
           <div className={styles.title}>Select version to view</div>
@@ -49,7 +51,7 @@ export function VersionDropdown({ versions, currentVersion }: VersionDropdownPro
             })}
           </div>
         </div>
-      </Dropdown> */}
+      </Dropdown>
     </div>
   );
 }

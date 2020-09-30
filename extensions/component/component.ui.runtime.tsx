@@ -1,4 +1,6 @@
 import { Slot } from '@teambit/harmony';
+import { ClickInsideAnIframeEvent } from '@teambit/preview';
+import PubsubAspect, { PubsubUI, BitBaseEvent } from '@teambit/pubsub';
 import { NavigationSlot, NavLinkProps, RouteSlot } from '@teambit/react-router';
 import { UIRuntime } from '@teambit/ui';
 import React from 'react';
@@ -32,8 +34,14 @@ export class ComponentUI {
     /**
      * slot for registering a new widget to the menu.
      */
-    private widgetSlot: NavigationSlot
-  ) {}
+    private widgetSlot: NavigationSlot,
+    /**
+     * register to pubsub
+     */
+    private pubsub: PubsubUI
+  ) {
+    this.registerPubSub();
+  }
 
   readonly routePath = `/:componentId(${componentIdUrlRegex})`;
 
@@ -42,7 +50,7 @@ export class ComponentUI {
   }
 
   getMenu(host: string) {
-    return <Menu navigationSlot={this.navSlot} widgetSlot={this.widgetSlot} host={host} />;
+    return <Menu navigationSlot={this.navSlot} pubsub={this.pubsub} widgetSlot={this.widgetSlot} host={host} />;
   }
   // getTopBarUI() {
   //   return (
@@ -54,6 +62,26 @@ export class ComponentUI {
   //     />
   //   );
   // }
+
+  registerPubSub() {
+    console.log('pubsub???', this.pubsub);
+    // this.pubsub.sub(ComponentAspect.id, (be: BitBaseEvent<any>) => {
+    //   switch(be.type) {
+    //     case ClickInsideAnIframeEvent.TYPE:
+    //       console.log('Click Inside an IFrame in preview!!!!', be);
+    //       const body = document.querySelector('body');
+    //       const _backgroundColor = body?.style.backgroundColor || 'red';
+
+    //       const new_backgroundColor = _backgroundColor == 'red' ? 'green' : 'red';
+
+    //       if(body){
+    //         body.style.backgroundColor = new_backgroundColor;
+    //       }
+    //       break;
+    //   }
+
+    // });
+  }
 
   registerRoute(route: RouteProps) {
     this.routeSlot.register(route);
@@ -80,11 +108,12 @@ export class ComponentUI {
   static async provider(
     deps,
     config,
-    [routeSlot, navSlot, widgetSlot]: [RouteSlot, OrderedNavigationSlot, NavigationSlot]
+    [routeSlot, navSlot, widgetSlot, pubsub]: [RouteSlot, OrderedNavigationSlot, NavigationSlot, PubsubUI]
   ) {
     // TODO: refactor ComponentHost to a separate extension (including sidebar, host, graphql, etc.)
     // TODO: add contextual hook for ComponentHost @uri/@oded
-    const componentUI = new ComponentUI(routeSlot, navSlot, widgetSlot);
+    console.log('pub is here!', pubsub);
+    const componentUI = new ComponentUI(routeSlot, navSlot, widgetSlot, pubsub);
     return componentUI;
   }
 }
