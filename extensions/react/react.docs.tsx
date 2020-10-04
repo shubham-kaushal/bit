@@ -13,9 +13,9 @@ import ReactJson from 'react-json-view';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.scss';
 
-import { workspaceEx, workspaceProps, extensionDirStructure } from './code-snippets';
+import { workspaceEx, workspaceProps, extensionDirStructure, customReactExt, exportExtension } from './code-snippets';
 
-export const abstract = 'An enviornment for React components';
+export const abstract = 'An environment for React components';
 
 export default () => {
   return (
@@ -67,7 +67,7 @@ export default () => {
           <ReactJson
             src={workspaceEx}
             theme="monokai"
-            collapsed={true}
+            collapsed={false}
             style={{ borderRadius: '5px', padding: '15px' }}
           />
           <Separator />
@@ -75,18 +75,49 @@ export default () => {
         <Section>
           <LinkedHeading link="extending">Creating a Custom React Environment</LinkedHeading>
           <Paragraph>
-            You can use your own customized React environment by creating an environment extension [component] and
-            setting your workspace to use it.
+            You can use your own customized React environment by creating an extension component and setting your
+            workspace to use it (using its component ID).
           </Paragraph>
           <LinkedHeading link="example-extending" size="xs">
             Example
           </LinkedHeading>
-          <Paragraph>
-            We'll start by creating the nessecary files for any extension component. The implementation file has the
-            '.extension' extension by convention.
-          </Paragraph>
+          <Paragraph>We'll start by creating the nessecary files for an extension component.</Paragraph>
           <CodeSnippet>{extensionDirStructure}</CodeSnippet>
-
+          <Paragraph>We'll then add the necessary boilerplate for a React extension</Paragraph>
+          <Tabs style={{ marginBottom: '15px' }}>
+            <TabList>
+              <Tab>custom-react</Tab>
+              <Tab>index</Tab>
+            </TabList>
+            <TabPanel>
+              <CodeSnippet>{customReactExt}</CodeSnippet>
+            </TabPanel>
+            <TabPanel>
+              <CodeSnippet>{exportExtension}</CodeSnippet>
+            </TabPanel>
+          </Tabs>
+          <LinkedHeading link="available-overrides">Available Override Functions</LinkedHeading>
+          <LinkedHeading link="override-ts-config" size="x-sm">
+            overrideTsConfig
+          </LinkedHeading>
+          <LinkedHeading link="override-dev-server-config" size="x-sm">
+            overrideDevServerConfig
+          </LinkedHeading>
+          <LinkedHeading link="override-preview-config" size="x-sm">
+            overridePreviewConfig
+          </LinkedHeading>
+          <LinkedHeading link="override-jest-config" size="x-sm">
+            overrideJestConfig
+          </LinkedHeading>
+          <LinkedHeading link="override-build-pipe" size="x-sm">
+            overrideBuildPipe
+          </LinkedHeading>
+          <LinkedHeading link="override-dependencies" size="x-sm">
+            override-dependencies
+          </LinkedHeading>
+          <LinkedHeading link="override-package-json-props" size="x-sm">
+            overridePackageJsonProps
+          </LinkedHeading>
           <Separator />
         </Section>
       </>
