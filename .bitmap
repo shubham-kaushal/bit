@@ -3034,11 +3034,6 @@
                 "relativePath": "webpack/webpack.preview.config.ts",
                 "test": false,
                 "name": "webpack.preview.config.ts"
-            },
-            {
-                "relativePath": "ws.json",
-                "test": false,
-                "name": "ws.json"
             }
         ],
         "mainFile": "index.ts",

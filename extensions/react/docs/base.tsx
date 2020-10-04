@@ -95,7 +95,7 @@ export function Base({ docs = defaultDocs, componentId, compositions, ...rest }:
 
         <ExamplesOverview examples={Content.examples || examples} />
 
-        <Properties properties={docsModel.properties} />
+        {/* <Properties properties={docsModel.properties} /> */}
       </div>
     </ThemeContext>
   );

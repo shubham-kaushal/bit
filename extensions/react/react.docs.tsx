@@ -7,12 +7,13 @@ import { List } from '@teambit/documenter.ui.list';
 import { Separator } from '@teambit/documenter.ui.separator';
 import { HighlightedText } from '@teambit/documenter.ui.highlighted-text';
 import { PropTable } from '@teambit/documenter.ui.property-table';
-// import { CodeSnippet } from '@teambit/documenter.ui.code-snippet';
+import { CodeSnippet } from '@teambit/documenter.ui.code-snippet';
 
 import ReactJson from 'react-json-view';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.scss';
 
-import { workspaceEx, workspaceProps } from './code-snippets';
+import { workspaceEx, workspaceProps, extensionDirStructure } from './code-snippets';
 
 export const abstract = 'An enviornment for React components';
 
@@ -27,16 +28,17 @@ export default () => {
             component in a Bit workspace. It spares you the overhead of setting up your own environment and creates a
             standardized environment for your team.
           </Paragraph>
+          <br />
           <Paragraph>
-            The React enviornment can be configured via the workspace.json. It can also be extended by consuming it and
-            invoking its 'override' functions in your own custom enviornment extension.
+            The React aspect can be <a href="#ws-config">configured via the workspace.json</a>. It can also be used to{' '}
+            <a href="#extending">create a custom environment extension</a> that tailors to your own needs.
           </Paragraph>
           <Separator />
         </Section>
         <Section>
           <LinkedHeading link="ws-config">Workspace Configuration</LinkedHeading>
           <Paragraph>The React aspect can be configured via the workspace.json, on two levels:</Paragraph>
-          <List element="ol">
+          <List element="ol" style={{ marginBottom: '15px' }}>
             {[
               <>
                 <HighlightedText>root</HighlightedText> sets the default confugirations for the entire workspace
@@ -47,7 +49,19 @@ export default () => {
               </>,
             ]}
           </List>
-          <LinkedHeading link="example" size="xs">
+          <Tabs style={{ marginBottom: '15px' }}>
+            <TabList>
+              <Tab>root</Tab>
+              <Tab>variants</Tab>
+            </TabList>
+            <TabPanel>
+              <PropTable rows={workspaceProps} />
+            </TabPanel>
+            <TabPanel>
+              <PropTable rows={workspaceProps} />
+            </TabPanel>
+          </Tabs>
+          <LinkedHeading link="example-ws-config" size="xs">
             Example
           </LinkedHeading>
           <ReactJson
@@ -56,13 +70,22 @@ export default () => {
             collapsed={true}
             style={{ borderRadius: '5px', padding: '15px' }}
           />
-          <PropTable rows={workspaceProps} />
-
           <Separator />
         </Section>
         <Section>
-          <LinkedHeading link="ws-config">Workspace Configuration</LinkedHeading>
-          <Paragraph>ws config...</Paragraph>
+          <LinkedHeading link="extending">Creating a Custom React Environment</LinkedHeading>
+          <Paragraph>
+            You can use your own customized React environment by creating an environment extension [component] and
+            setting your workspace to use it.
+          </Paragraph>
+          <LinkedHeading link="example-extending" size="xs">
+            Example
+          </LinkedHeading>
+          <Paragraph>
+            We'll start by creating the nessecary files for any extension component. The implementation file has the
+            '.extension' extension by convention.
+          </Paragraph>
+          <CodeSnippet>{extensionDirStructure}</CodeSnippet>
 
           <Separator />
         </Section>

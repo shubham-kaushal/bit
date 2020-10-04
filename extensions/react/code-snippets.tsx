@@ -30,23 +30,26 @@ export const workspaceEx = {
 export const workspaceProps = [
   {
     name: 'compiler',
-    type: 'string',
-    description: 'An element type to render as (string or function).',
-    required: true,
-    default: { value: 'h1' },
+    type: "'babel' | 'ts'",
+    description: 'Choose a compiler',
+    default: { value: "'ts'" },
   },
   {
-    name: 'heading',
-    type: 'string',
-    description: 'An element type to render as (string or function).',
-    required: true,
-    default: { value: 'h1' },
+    name: 'tester',
+    type: "'jest' | 'mocha'",
+    description: 'Choose a test runner.',
+    default: { value: "'jest'" },
   },
   {
-    name: 'heading',
+    name: 'reactVersion',
     type: 'string',
-    description: 'An element type to render as (string or function).',
-    required: true,
-    default: { value: 'h1' },
+    description: 'Choose a version of React.',
+    default: { value: "'^16.13.1'" },
   },
 ];
+
+export const extensionDirStructure = `
+$ mkdir -p extensions/custom-react
+$ touch extensions/custom-react/custom-react.extension.ts
+$ touch extensions/custom-react/index.ts
+`;
