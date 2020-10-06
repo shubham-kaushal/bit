@@ -22,6 +22,7 @@ import { UiServerStartedEvent } from './events';
 import { createRoot } from './create-root';
 import { UnknownUI } from './exceptions';
 import { StartCmd } from './start.cmd';
+import { DocCmd } from './doc.cmd';
 import { UIBuildCmd } from './ui-build.cmd';
 import { UIRoot } from './ui-root';
 import { UIServer } from './ui-server';
@@ -309,6 +310,7 @@ export class UiMain {
 
     const ui = new UiMain(pubsub, config, graphql, uiRootSlot, express, onStartSlot, componentExtension, cache, logger);
     cli.register(new StartCmd(ui, logger, pubsub));
+    cli.register(new DocCmd(ui, logger, pubsub));
     cli.register(new UIBuildCmd(ui));
     return ui;
   }
