@@ -14,6 +14,16 @@
                 "name": "api-extractor.main.runtime.ts"
             },
             {
+                "relativePath": "config/api-extractor.json",
+                "test": false,
+                "name": "api-extractor.json"
+            },
+            {
+                "relativePath": "config/bad-hack.d.ts",
+                "test": false,
+                "name": "bad-hack.d.ts"
+            },
+            {
                 "relativePath": "index.ts",
                 "test": false,
                 "name": "index.ts"
