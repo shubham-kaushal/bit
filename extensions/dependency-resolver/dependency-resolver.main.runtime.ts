@@ -37,6 +37,8 @@ import {
   PolicyDep,
   WorkspaceDependenciesPolicy,
 } from './types';
+import { WorkspaceAspect } from '@teambit/workspace';
+import type { WorkspaceMain } from '@teambit/workspace';
 
 export type PoliciesRegistry = SlotRegistry<DependenciesPolicy>;
 export type PackageManagerSlot = SlotRegistry<PackageManager>;
@@ -105,6 +107,7 @@ export class DependencyResolverMain {
      */
     private policiesRegistry: PoliciesRegistry,
 
+    private workspace: WorkspaceMain,
     /**
      * envs extension.
      */
@@ -360,7 +363,7 @@ export class DependencyResolverMain {
   }
 
   static runtime = MainRuntime;
-  static dependencies = [EnvsAspect, LoggerAspect, ConfigAspect, AspectLoaderAspect];
+  static dependencies = [WorkspaceAspect, EnvsAspect, LoggerAspect, ConfigAspect, AspectLoaderAspect];
 
   static slots = [Slot.withType<DependenciesPolicy>(), Slot.withType<PackageManager>()];
 
@@ -375,7 +378,13 @@ export class DependencyResolverMain {
   };
 
   static async provider(
-    [envs, loggerExt, configMain, aspectLoader]: [EnvsMain, LoggerMain, Config, AspectLoaderMain],
+    [workspace, envs, loggerExt, configMain, aspectLoader]: [
+      WorkspaceMain,
+      EnvsMain,
+      LoggerMain,
+      Config,
+      AspectLoaderMain
+    ],
     config: DependencyResolverWorkspaceConfig,
     [policiesRegistry, packageManagerSlot]: [PoliciesRegistry, PackageManagerSlot]
   ) {
@@ -384,6 +393,7 @@ export class DependencyResolverMain {
     const dependencyResolver = new DependencyResolverMain(
       config,
       policiesRegistry,
+      workspace,
       envs,
       logger,
       configMain,

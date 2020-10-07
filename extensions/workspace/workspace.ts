@@ -15,12 +15,6 @@ import {
   TagMap,
 } from '@teambit/component';
 import { ComponentScopeDirMap } from '@teambit/config';
-import {
-  DependencyLifecycleType,
-  DependencyResolverMain,
-  PackageManagerInstallOptions,
-  PolicyDep,
-} from '@teambit/dependency-resolver';
 import { EnvsMain } from '@teambit/environments';
 import { GraphqlMain } from '@teambit/graphql';
 import { Harmony } from '@teambit/harmony';
@@ -130,8 +124,6 @@ export class Workspace implements ComponentFactory {
     private componentAspect: ComponentMain,
 
     readonly isolateEnv: IsolatorMain,
-
-    private dependencyResolver: DependencyResolverMain,
 
     private variants: VariantsMain,
 

@@ -3,7 +3,6 @@ import type { AspectLoaderMain } from '@teambit/aspect-loader';
 import { BundlerMain } from '@teambit/bundler';
 import { CLIMain } from '@teambit/cli';
 import { ComponentMain } from '@teambit/component';
-import { DependencyResolverMain } from '@teambit/dependency-resolver';
 import { EnvsMain } from '@teambit/environments';
 import { GraphqlMain } from '@teambit/graphql';
 import { Harmony, SlotRegistry } from '@teambit/harmony';
@@ -35,7 +34,6 @@ export type WorkspaceDeps = [
   ScopeMain,
   ComponentMain,
   IsolatorMain,
-  DependencyResolverMain,
   VariantsMain,
   LoggerMain,
   GraphqlMain,
@@ -75,7 +73,6 @@ export default async function provideWorkspace(
     scope,
     component,
     isolator,
-    dependencyResolver,
     variants,
     loggerExt,
     graphql,
@@ -105,7 +102,6 @@ export default async function provideWorkspace(
     scope,
     component,
     isolator,
-    dependencyResolver,
     variants,
     aspectLoader,
     logger,

@@ -27,7 +27,6 @@ export const WorkspaceMain = {
     ScopeAspect,
     ComponentAspect,
     IsolatorAspect,
-    DependencyResolverAspect,
     VariantsAspect,
     LoggerAspect,
     GraphqlAspect,
