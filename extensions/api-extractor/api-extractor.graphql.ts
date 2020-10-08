@@ -1,53 +1,88 @@
 import { ComponentFactory } from '@teambit/component';
 import { Schema } from '@teambit/graphql';
+
 import gql from 'graphql-tag';
 
-import { TesterMain } from './tester.main.runtime';
+import { ApiExtractorMain } from './api-extractor.main.runtime';
 
-export function apiExtractorSchema(tester: TesterMain): Schema {
+export function apiExtractorSchema(apiExtractor: ApiExtractorMain): Schema {
   return {
     typeDefs: gql`
       extend type ComponentHost {
-        getTests(id: String!): TestsResults
+        getDoc(id: String!): [ApiDocJson]
       }
 
-      type TestsResults {
-        testFiles: [TestFiles]
-        success: Boolean
-        start: Int
+      type ApiDocJson {
+        componentName: String
+        apiJsonFileJSON: ApiJsonFileJSON
+        tsdocMetadataFileJSON: TsdocMetadataFileJSON
       }
 
-      type TestFiles {
-        file: String
-        tests: [Tests]
-        pass: Int
-        failed: Int
-        pending: Int
-        duration: Int
-        slow: Boolean
-        error: TestError
-      }
-
-      type TestError {
-        failureMessage: String
-        error: String
-      }
-
-      type Tests {
-        ancestor: [String]
+      type ApiJsonFileJSON {
+        metadata: MetadataObject
+        kind: String
+        canonicalReference: String
+        docComment: String
         name: String
-        duration: String
-        status: String
-        error: String
+        members: [Member]
+      }
+
+      type MetadataObject {
+        toolPackage: String
+        toolVersion: String
+        schemaVersion: Int
+        oldestForwardsCompatibleVersion: Int
+      }
+
+      type TsdocMetadataFileJSON {
+        tsdocVersion: String
+        toolPackages: [ToolPackage]
+      }
+
+      type ToolPackage {
+        packageName: String
+        packageVersion: String
+      }
+
+      type Member {
+        kind: String
+        canonicalReference: String
+        docComment: String
+        name: String
+        excerptTokens: [ExcerptToken]
+        members: [Member]
+        returnTypeTokenRange: ReturnTypeTokenRange
+        releaseTag: String
+        overloadIndex: Int
+        parameters: [Parameter]
+      }
+
+      type Parameter {
+        parameterName: String
+        parameterTypeTokenRange: ParameterTypeTokenRange
+      }
+
+      type ParameterTypeTokenRange {
+        startIndex: Int
+        endIndex: Int
+      }
+
+      type ReturnTypeTokenRange {
+        startIndex: Int
+        endIndex: Int
+      }
+
+      type ExcerptToken {
+        kind: String
+        text: String
+        canonicalReference: String
       }
     `,
     resolvers: {
       ComponentHost: {
-        getTests: async (host: ComponentFactory, { id }: { id: string }) => {
+        getDoc: async (host: ComponentFactory, { id }: { id: string }) => {
           const componentId = await host.resolveComponentId(id);
-          const component = await host.get(componentId);
-          if (!component) return null;
-          const testsResults = tester.getTestsResults(component);
+          const testsResults = apiExtractor.generateComponentDocsByComponentID(componentId);
           if (!testsResults) return null;
           return testsResults;
         },

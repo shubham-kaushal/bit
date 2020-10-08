@@ -47,6 +47,36 @@ export class ApiExtractorMain {
     readonly task: ApiExtractorTask
   ) {}
 
+  public async generateComponentDocsByComponentID(componentID) {
+    const componentsPathsList = [this.workspace.componentDir(componentID)];
+    const onOutput = (e, msg) => {
+      e ? console.error(msg, e) : console.log(msg);
+    };
+
+    // Creating temp folder
+    const tmpobj = tmp.dirSync({ prefix: 'dev.bit.temp-', keep: false, unsafeCleanup: true });
+    const tmpFolderPath = tmpobj.name;
+    const tempDtsOutputFolder = path.join(tmpFolderPath, '__tempDtsOutputFolder__');
+
+    // Creating DTS files
+    const dtsCreationOutputPathArray = this.createDtsFiles(componentsPathsList, tmpFolderPath, onOutput);
+
+    // Extracting API from DTS files
+    const apiOutputPathArray = dtsCreationOutputPathArray.map((dtsPath) =>
+      extractapi(path.join(dtsPath.dtsOutputFolder, 'index.d.ts'), tempDtsOutputFolder, dtsPath.componentPath, onOutput)
+    );
+
+    const res = apiOutputPathArray.map((paths) => ({
+      componentName: paths.componentName,
+      apiJsonFileJSON: requireJsonWithComments(paths.apiJsonFilePath),
+      tsdocMetadataFileJSON: requireJsonWithComments(paths.tsdocMetadataFilePath),
+    }));
+
+    //cleanup
+    tmpobj.removeCallback();
+    return res;
+  }
+
   public async generateDocs(onOutput: (e, msg) => void) {
     // getComponentsDirectory
     const componentsList = await this.workspace.list();
@@ -73,7 +103,7 @@ export class ApiExtractorMain {
       tsdocMetadataFileJSON: requireJsonWithComments(paths.tsdocMetadataFilePath),
     }));
 
-    console.log('---> ', res);
+    console.log('---> ', JSON.stringify(res));
 
     //cleanup
     tmpobj.removeCallback();
@@ -110,7 +140,9 @@ export class ApiExtractorMain {
     );
 
     cli.register(new DocCmd(apiExtractor, workspace, logger));
-    graphql.register(apiExtractorSchema(apiExtractor));
+
+    const _apiExtractorSchema = apiExtractorSchema(apiExtractor);
+    graphql.register(_apiExtractorSchema);
     return apiExtractor;
   }
 }
