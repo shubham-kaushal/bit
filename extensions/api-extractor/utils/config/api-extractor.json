@@ -260,7 +260,7 @@
      *
      * DEFAULT VALUE: true
      */
-    "enabled": true,
+    "enabled": true
     /**
      * Specifies where the TSDoc metadata file should be written.
      *
@@ -317,7 +317,7 @@
          *
          * DEFAULT VALUE: "warning"
          */
-        "logLevel": "warning"
+        "logLevel": "none"
 
         /**
          * When addToApiReportFile is true:  If API Extractor is configured to write an API report file (.api.md),
@@ -346,7 +346,7 @@
      */
     "extractorMessageReporting": {
       "default": {
-        "logLevel": "warning"
+        "logLevel": "none"
         // "addToApiReportFile": false
       }
 
@@ -367,7 +367,7 @@
      */
     "tsdocMessageReporting": {
       "default": {
-        "logLevel": "warning"
+        "logLevel": "none"
         // "addToApiReportFile": false
       }
 

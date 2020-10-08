@@ -1,6 +1,4 @@
 import type { AspectMain } from '@teambit/aspect';
-import type { ApiExtractorMain } from '@teambit/api-extractor';
-import { ApiExtractorAspect } from '@teambit/api-extractor';
 import { AspectDefinition } from '@teambit/aspect-loader';
 import { CacheAspect, CacheMain } from '@teambit/cache';
 import { CLIAspect, CLIMain, MainRuntime } from '@teambit/cli';
@@ -24,7 +22,6 @@ import { UiServerStartedEvent } from './events';
 import { createRoot } from './create-root';
 import { UnknownUI } from './exceptions';
 import { StartCmd } from './start.cmd';
-import { DocCmd } from './doc.cmd';
 import { UIBuildCmd } from './ui-build.cmd';
 import { UIRoot } from './ui-root';
 import { UIServer } from './ui-server';
@@ -32,17 +29,7 @@ import { UIAspect, UIRuntime } from './ui.aspect';
 import { OpenBrowser } from './open-browser';
 import createWebpackConfig from './webpack/webpack.config';
 
-export type UIDeps = [
-  ApiExtractorMain,
-  PubsubMain,
-  CLIMain,
-  GraphqlMain,
-  ExpressMain,
-  ComponentMain,
-  CacheMain,
-  LoggerMain,
-  AspectMain
-];
+export type UIDeps = [PubsubMain, CLIMain, GraphqlMain, ExpressMain, ComponentMain, CacheMain, LoggerMain, AspectMain];
 
 export type UIRootRegistry = SlotRegistry<UIRoot>;
 
@@ -301,7 +288,6 @@ export class UiMain {
 
   static runtime = MainRuntime;
   static dependencies = [
-    ApiExtractorAspect,
     PubsubAspect,
     CLIAspect,
     GraphqlAspect,
@@ -314,7 +300,7 @@ export class UiMain {
   static slots = [Slot.withType<UIRoot>(), Slot.withType<OnStart>()];
 
   static async provider(
-    [apiExtractor, pubsub, cli, graphql, express, componentExtension, cache, loggerMain]: UIDeps,
+    [pubsub, cli, graphql, express, componentExtension, cache, loggerMain]: UIDeps,
     config,
     [uiRootSlot, onStartSlot]: [UIRootRegistry, OnStartSlot]
   ) {
@@ -323,7 +309,6 @@ export class UiMain {
 
     const ui = new UiMain(pubsub, config, graphql, uiRootSlot, express, onStartSlot, componentExtension, cache, logger);
     cli.register(new StartCmd(ui, logger, pubsub));
-    cli.register(new DocCmd(ui, apiExtractor, logger, pubsub));
     cli.register(new UIBuildCmd(ui));
     return ui;
   }

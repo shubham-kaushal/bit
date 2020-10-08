@@ -4,9 +4,19 @@
     "api-extractor": {
         "files": [
             {
+                "relativePath": "api-extractor-event.ts",
+                "test": false,
+                "name": "api-extractor-event.ts"
+            },
+            {
                 "relativePath": "api-extractor.aspect.ts",
                 "test": false,
                 "name": "api-extractor.aspect.ts"
+            },
+            {
+                "relativePath": "api-extractor.graphql.ts",
+                "test": false,
+                "name": "api-extractor.graphql.ts"
             },
             {
                 "relativePath": "api-extractor.main.runtime.ts",
@@ -14,17 +24,52 @@
                 "name": "api-extractor.main.runtime.ts"
             },
             {
-                "relativePath": "config/_package.json",
+                "relativePath": "api-extractor.service.ts",
+                "test": false,
+                "name": "api-extractor.service.ts"
+            },
+            {
+                "relativePath": "api-extractor.task.ts",
+                "test": false,
+                "name": "api-extractor.task.ts"
+            },
+            {
+                "relativePath": "doc.cmd.tsx",
+                "test": false,
+                "name": "doc.cmd.tsx"
+            },
+            {
+                "relativePath": "index.ts",
+                "test": false,
+                "name": "index.ts"
+            },
+            {
+                "relativePath": "utils/JSONC.ts",
+                "test": false,
+                "name": "JSONC.ts"
+            },
+            {
+                "relativePath": "utils/api-extractor.ts",
+                "test": false,
+                "name": "api-extractor.ts"
+            },
+            {
+                "relativePath": "utils/config/_package.json",
                 "test": false,
                 "name": "_package.json"
             },
             {
-                "relativePath": "config/api-extractor.json",
+                "relativePath": "utils/config/api-extractor.json",
                 "test": false,
                 "name": "api-extractor.json"
             },
             {
-                "relativePath": "index.ts",
+                "relativePath": "utils/dts-files.ts",
+                "test": false,
+                "name": "dts-files.ts"
+            },
+            {
+                "relativePath": "utils/index.ts",
                 "test": false,
                 "name": "index.ts"
             }
@@ -4689,11 +4734,6 @@
                 "relativePath": "create-root.ts",
                 "test": false,
                 "name": "create-root.ts"
-            },
-            {
-                "relativePath": "doc.cmd.tsx",
-                "test": false,
-                "name": "doc.cmd.tsx"
             },
             {
                 "relativePath": "events/index.ts",
