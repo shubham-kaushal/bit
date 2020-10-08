@@ -3493,7 +3493,66 @@
         "exported": false,
         "lanes": []
     },
-    "sidebar@0.0.66": {
+    "services": {
+        "files": [
+            {
+                "name": "index.ts",
+                "relativePath": "index.ts",
+                "test": false
+            },
+            {
+                "name": "services.aspect.ts",
+                "relativePath": "services.aspect.ts",
+                "test": false
+            },
+            {
+                "name": "services.module.scss",
+                "relativePath": "services.module.scss",
+                "test": false
+            },
+            {
+                "name": "services.section.tsx",
+                "relativePath": "services.section.tsx",
+                "test": false
+            },
+            {
+                "name": "services.ui.runtime.tsx",
+                "relativePath": "services.ui.runtime.tsx",
+                "test": false
+            },
+            {
+                "name": "services-page.module.scss",
+                "relativePath": "ui/services-page.module.scss",
+                "test": false
+            },
+            {
+                "name": "services-page.tsx",
+                "relativePath": "ui/services-page.tsx",
+                "test": false
+            },
+            {
+                "name": "index.ts",
+                "relativePath": "ui/task-block/index.ts",
+                "test": false
+            },
+            {
+                "name": "task-block.module.scss",
+                "relativePath": "ui/task-block/task-block.module.scss",
+                "test": false
+            },
+            {
+                "name": "task-block.tsx",
+                "relativePath": "ui/task-block/task-block.tsx",
+                "test": false
+            }
+        ],
+        "mainFile": "index.ts",
+        "rootDir": "extensions/services",
+        "origin": "AUTHORED",
+        "exported": false,
+        "lanes": []
+    },
+    "sidebar": {
         "files": [
             {
                 "name": "drawer.module.scss",

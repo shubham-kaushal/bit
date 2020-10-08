@@ -1,0 +1,40 @@
+.taskBlock {
+  > div:last-child {
+    margin-bottom: 32px;
+  }
+}
+.taskTitle {
+  > div:first-child {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    > div {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+  }
+}
+.name {
+  font-size: var(--p-xxl);
+  color: var(--text-highlight);
+  margin-right: 16px;
+}
+.icon {
+  width: 32px;
+}
+.description {
+  font-size: var(--p-xs);
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+.overriddenLabel {
+  font-size: var(--p-xxs);
+  color: var(--text-highlight);
+  border-radius: 6px;
+  background-color: var(--border-color);
+  padding: 2px 8px;
+}
+.spacer {
+  width: 16px;
+}

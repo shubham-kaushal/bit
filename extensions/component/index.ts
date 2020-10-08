@@ -27,5 +27,6 @@ export { ComponentModel, ComponentModelProps } from './ui/component-model';
 export { default as Config } from './config';
 // export { AspectList } from './aspect-list';
 // export { AspectEntry } from './aspect-entry';
+export { TopBarNav } from './ui/top-bar-nav';
 export { ComponentAspect };
 export default ComponentAspect;
