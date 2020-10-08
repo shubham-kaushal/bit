@@ -178,6 +178,7 @@
         "subscriptions-transport-ws": "^0.9.16",
         "supi": "0.42.0",
         "terser-webpack-plugin": "^4.1.0",
+        "tmp": "0.2.1",
         "url-loader": "^4.1.0",
         "webpack": "4.42.0",
         "webpack-dev-middleware": "^3.7.2",

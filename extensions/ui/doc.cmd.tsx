@@ -44,7 +44,7 @@ export class DocCmd implements Command {
 
     return (
       <>
-        <Text>{this.apiExtractor.generateDocs([path], verbose)}</Text>
+        <Text>{this.apiExtractor.generateDocs([path], !!verbose)}</Text>
       </>
     );
   }

@@ -2,25 +2,51 @@ import { MainRuntime } from '@teambit/cli';
 
 import ts from 'typescript';
 import * as fs from 'fs-extra';
+import * as tmp from 'tmp';
 import * as path from 'path';
-import { Extractor, ExtractorConfig, ExtractorResult } from '@microsoft/api-extractor';
+import { Extractor, ExtractorConfig, ExtractorResult, IExtractorConfigPrepareOptions, ExtractorLogLevel } from '@microsoft/api-extractor';
 
 import { ApiExtractorAspect } from './api-extractor.aspect';
 
 export class ApiExtractorMain {
+
   public generateDocs(componentsPaths: string[], verbose) {
-    const res = this.createDtsFiles(componentsPaths); //1.
-    res.forEach((r) => this.extractapi(r, verbose)); //2.
+    //TEMP path
+    const t = '/Users/uritalyosef/Desktop/BIT/bad-jokes-workspace/etc/';
+
+    // Creating temp folder
+    const tmpobj = tmp.dirSync({prefix: 'bit.dev.temp-', keep: false, unsafeCleanup: true});
+    const tmpFolderPath = tmpobj.name;
+    
+    if(verbose)
+      console.log(`Writing temporary files to ${tmpFolderPath}`);
+
+    // Creating DTS files
+    const dtsCreationOutputPathArray = this.createDtsFiles(componentsPaths, tmpFolderPath, verbose);
+
+    // Extracting API from DTS files
+    // const t = '/Users/uritalyosef/Desktop/BIT/bad-jokes-workspace/etc/'; //TEMP
+    const apiOutputPathArray = dtsCreationOutputPathArray.map((r) => this.extractapi(r, t, verbose));
+
+    // Get results
+    const res = apiOutputPathArray.map(paths => ({
+      apiJsonFileStr: fs.readFileSync(paths.apiJsonFilePath, {encoding: 'utf-8'}),
+      tsdocMetadataFileStr: fs.readFileSync(paths.tsdocMetadataFilePath, {encoding: 'utf-8'})
+    }))
+    
+    console.log('---> ', res)
+
+    //cleanup
+    tmpobj.removeCallback();
   }
 
-  public createDtsFiles(componentsPaths: string[]) {
-    return componentsPaths.map((componentPath) => this.createDtsFile(componentPath));
+  public createDtsFiles(componentsPaths: string[], tmpFolderPath: string, verbose: boolean) {
+    return componentsPaths.map((componentPath) => this.createDtsFile(componentPath, tmpFolderPath, verbose));
   }
 
-  public createDtsFile(componentPath: string) {
-    // const fileNames = componentsPaths.map(componentsPath => path.join(componentsPath, 'index.ts'))
-    const fileNames = path.join(componentPath, 'index.ts');
-    const typesFolder = path.join(componentPath, 'types');
+  public createDtsFile(componentPath: string, dtsOutputFolder: string, verbose: boolean) {
+    
+    const rootFilePath = path.join(componentPath, 'index.ts');
 
     const options: ts.CompilerOptions = {
       jsx: ts.JsxEmit.React,
@@ -37,7 +63,7 @@ export class ApiExtractorMain {
       noEmitOnError: false,
       // noImplicitAny: false,
       // outDir: 'lib2',
-      outDir: typesFolder,
+      outDir: dtsOutputFolder,
       lib: ['es5'],
       // disableSourceOfProjectReferenceRedirect:true,
       // disableSolutionSearching: true,
@@ -49,56 +75,73 @@ export class ApiExtractorMain {
       // typeRoots:["/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/compiler"]
       // rootDirs: ['/Users/uritalyosef/Desktop/BIT/bad-jokes-workspace/components']
     };
-    let program = ts.createProgram([fileNames], options);
+    
+    //Compilation
+    let program = ts.createProgram([rootFilePath], options);
     let emitResult = program.emit();
 
-    let allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
 
-    allDiagnostics.forEach((diagnostic) => {
-      if (diagnostic.file) {
-        let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
-        let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-        console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-      } else {
-        console.log(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
-      }
-    });
-
+    if(verbose){ 
+      let allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
+      allDiagnostics.forEach((diagnostic) => {
+        if (diagnostic.file) {
+          let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
+          let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+          console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+        } else {
+          console.log(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
+        }
+      });
+    }
+      
     return {
-      fileNames,
+      rootFilePath,
       componentPath,
-      typesFolder,
+      dtsOutputFolder,
     };
   }
 
-  public extractapi(paths: any, verbose) {
+  public extractapi(paths: any, outputFolder: string, verbose: boolean) {
     const apiExtractorJsonPath: string = path.join(__dirname, '../config/api-extractor.json');
-    const reportPath: string = path.join(paths.componentPath, 'report');
+    const componentName = path.basename(paths.componentPath);
+    const packageJsonFullPath = path.join(__dirname, '../config/_package.json'); // Due to a Bug
+    
+    // TODO output folter
+    const apiJsonFilePath = path.join(outputFolder, componentName,`${componentName}.api.json`); 
+    const tsdocMetadataFilePath = path.join(outputFolder, componentName, `tsdoc-metadata.json`); 
+    
 
-    // This is a hack needs a temp file to exist (bad-hack.d)
-    let extractorConfig: ExtractorConfig = ExtractorConfig.loadFileAndPrepare(apiExtractorJsonPath);
-    extractorConfig.mainEntryPointFilePath = path.join(paths.typesFolder, 'index.d.ts');
-
-    // This is the right implementation, not working due to bug in api-extractor.
-    /**
-     const options = ExtractorConfig.loadFile(apiExtractorJsonPath);
-     options.mainEntryPointFilePath = path.join(paths.typesFolder, 'index.d.ts');
-     let extractorConfig: ExtractorConfig = ExtractorConfig.prepare(options);
-     */
-
-    if (!fs.existsSync(reportPath)) {
-      fs.mkdirSync(reportPath);
+    // Load Api-Extractor configurations
+     let configFile = ExtractorConfig.loadFile(apiExtractorJsonPath);
+     
+    
+     configFile.mainEntryPointFilePath = path.join(paths.dtsOutputFolder, 'index.d.ts');
+     configFile.docModel.apiJsonFilePath = apiJsonFilePath;
+     configFile.tsdocMetadata.tsdocMetadataFilePath = tsdocMetadataFilePath;
+     
+    
+     //  Configure messaging level
+    if(!verbose){
+      configFile.messages.compilerMessageReporting.default.logLevel = 'none';
+      Object.keys(configFile.messages.compilerMessageReporting).forEach(k => {
+        configFile.messages.compilerMessageReporting[k].logLevel = 'none';
+      })
+      configFile.messages.tsdocMessageReporting.default.logLevel = 'none';
     }
-    extractorConfig.reportFolder = reportPath;
-    extractorConfig.reportFilePath = path.join(reportPath, 'api-extractor.api.md');
-    extractorConfig.reportTempFilePath = path.join(reportPath, 'temp/api-extractor.api.md');
+     
+     const extractorConfigPrepareOptions: IExtractorConfigPrepareOptions = {
+      configObject: configFile,
+      configObjectFullPath: apiExtractorJsonPath,
+      packageJsonFullPath: packageJsonFullPath,
+      projectFolderLookupToken: paths.componentPath
+     }
 
+     let extractorConfig: ExtractorConfig = ExtractorConfig.prepare(extractorConfigPrepareOptions);
+
+      
     // Invoke API Extractor
     const extractorResult: ExtractorResult = Extractor.invoke(extractorConfig, {
-      // Equivalent to the "--local" command-line parameter
       localBuild: true,
-
-      // Equivalent to the "--verbose" command-line parameter
       showVerboseMessages: verbose,
     });
 
@@ -111,6 +154,11 @@ export class ApiExtractorMain {
           ` and ${extractorResult.warningCount} warnings`
       );
       // process.exitCode = 1;
+    }
+
+    return {
+      tsdocMetadataFilePath,
+      apiJsonFilePath
     }
   }
 
