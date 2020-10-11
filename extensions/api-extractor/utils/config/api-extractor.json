@@ -128,6 +128,7 @@
      * (REQUIRED) Whether to generate an API report.
      */
     "enabled": false
+    // "enabled": true,
 
     /**
      * The filename for the API report files.  It will be combined with "reportFolder" or "reportTempFolder" to produce
@@ -154,6 +155,7 @@
      * DEFAULT VALUE: "<projectFolder>/etc/"
      */
     // "reportFolder": "<projectFolder>/etc/"
+    // "reportFolder": "/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/api-docs"
 
     /**
      * Specifies the folder where the temporary report file is written.  The file name portion is determined by

@@ -34,6 +34,11 @@
                 "name": "api-extractor.task.ts"
             },
             {
+                "relativePath": "config/_package.json",
+                "test": false,
+                "name": "_package.json"
+            },
+            {
                 "relativePath": "doc.cmd.tsx",
                 "test": false,
                 "name": "doc.cmd.tsx"
