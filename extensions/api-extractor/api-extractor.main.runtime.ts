@@ -55,26 +55,36 @@ export class ApiExtractorMain {
 
     // Creating temp folder
     const tmpobj = tmp.dirSync({ prefix: 'dev.bit.temp-', keep: false, unsafeCleanup: true });
-    const tmpFolderPath = tmpobj.name;
-    const tempDtsOutputFolder = path.join(tmpFolderPath, '__tempDtsOutputFolder__');
+    try {
+      const tmpFolderPath = tmpobj.name;
+      const tempDtsOutputFolder = path.join(tmpFolderPath, '__tempDtsOutputFolder__');
 
-    // Creating DTS files
-    const dtsCreationOutputPathArray = this.createDtsFiles(componentsPathsList, tmpFolderPath, onOutput);
+      // Creating DTS files
+      const dtsCreationOutputPathArray = this.createDtsFiles(componentsPathsList, tmpFolderPath, onOutput);
 
-    // Extracting API from DTS files
-    const apiOutputPathArray = dtsCreationOutputPathArray.map((dtsPath) =>
-      extractapi(path.join(dtsPath.dtsOutputFolder, 'index.d.ts'), tempDtsOutputFolder, dtsPath.componentPath, onOutput)
-    );
+      // Extracting API from DTS files
+      const apiOutputPathArray = dtsCreationOutputPathArray.map((dtsPath) =>
+        extractapi(
+          path.join(dtsPath.dtsOutputFolder, 'index.d.ts'),
+          tempDtsOutputFolder,
+          dtsPath.componentPath,
+          onOutput
+        )
+      );
 
-    const res = apiOutputPathArray.map((paths) => ({
-      componentName: paths.componentName,
-      apiJsonFileJSON: requireJsonWithComments(paths.apiJsonFilePath),
-      tsdocMetadataFileJSON: requireJsonWithComments(paths.tsdocMetadataFilePath),
-    }));
+      const res = apiOutputPathArray.map((paths) => ({
+        componentName: paths.componentName,
+        apiJsonFileJSON: requireJsonWithComments(paths.apiJsonFilePath),
+        tsdocMetadataFileJSON: requireJsonWithComments(paths.tsdocMetadataFilePath),
+      }));
 
-    //cleanup
-    tmpobj.removeCallback();
-    return res;
+      //cleanup
+      tmpobj.removeCallback();
+      return res;
+    } catch (err) {
+      tmpobj.removeCallback();
+      throw err;
+    }
   }
 
   public async generateDocs(onOutput: (e, msg) => void, reportOutputPath) {
@@ -84,36 +94,41 @@ export class ApiExtractorMain {
 
     // Creating temp folder
     const tmpobj = tmp.dirSync({ prefix: 'dev.bit.temp-', keep: false, unsafeCleanup: true });
-    const tmpFolderPath = tmpobj.name;
-    const tempDtsOutputFolder = path.join(tmpFolderPath, '__tempDtsOutputFolder__');
+    try {
+      const tmpFolderPath = tmpobj.name;
+      const tempDtsOutputFolder = path.join(tmpFolderPath, '__tempDtsOutputFolder__');
 
-    onOutput(null, `Writing temporary files to ${tmpFolderPath}`);
+      onOutput(null, `Writing temporary files to ${tmpFolderPath}`);
 
-    // Creating DTS files
-    const dtsCreationOutputPathArray = this.createDtsFiles(componentsPathsList, tmpFolderPath, onOutput);
+      // Creating DTS files
+      const dtsCreationOutputPathArray = this.createDtsFiles(componentsPathsList, tmpFolderPath, onOutput);
 
-    // Extracting API from DTS files
-    const apiOutputPathArray = dtsCreationOutputPathArray.map((dtsPath) =>
-      extractapi(
-        path.join(dtsPath.dtsOutputFolder, 'index.d.ts'),
-        tempDtsOutputFolder,
-        dtsPath.componentPath,
-        onOutput,
-        reportOutputPath
-      )
-    );
+      // Extracting API from DTS files
+      const apiOutputPathArray = dtsCreationOutputPathArray.map((dtsPath) =>
+        extractapi(
+          path.join(dtsPath.dtsOutputFolder, 'index.d.ts'),
+          tempDtsOutputFolder,
+          dtsPath.componentPath,
+          onOutput,
+          reportOutputPath
+        )
+      );
 
-    const res = apiOutputPathArray.map((paths) => ({
-      componentName: paths.componentName,
-      apiJsonFileJSON: requireJsonWithComments(paths.apiJsonFilePath),
-      tsdocMetadataFileJSON: requireJsonWithComments(paths.tsdocMetadataFilePath),
-    }));
+      const res = apiOutputPathArray.map((paths) => ({
+        componentName: paths.componentName,
+        apiJsonFileJSON: requireJsonWithComments(paths.apiJsonFilePath),
+        tsdocMetadataFileJSON: requireJsonWithComments(paths.tsdocMetadataFilePath),
+      }));
 
-    console.log('---> ', JSON.stringify(res));
+      console.log('---> ', JSON.stringify(res));
 
-    //cleanup
-    tmpobj.removeCallback();
-    return res;
+      //cleanup
+      tmpobj.removeCallback();
+      return res;
+    } catch (err) {
+      tmpobj.removeCallback();
+      throw err;
+    }
   }
 
   public createDtsFiles(componentsPaths: string[], tmpFolderPath: string, onOutput: (e, msg) => void) {

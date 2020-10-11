@@ -12,7 +12,7 @@ export const extractapi = (
   outputFolder: string,
   componentPath: string,
   onOutput,
-  reportOutputPath: string
+  reportOutputPath?: string
 ) => {
   const apiExtractorJsonPath: string = path.join(__dirname, '../config/api-extractor.json'); // Due to a Bug
   const componentName = path.basename(componentPath);
