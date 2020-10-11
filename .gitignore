@@ -92,3 +92,4 @@ bin/bit
 # package managers
 pnpm-lock.yaml
 yarn.lock
+api-docs
