@@ -7,12 +7,18 @@ import {
   ExtractorLogLevel,
 } from '@microsoft/api-extractor';
 
-export const extractapi = (dtsFilePaths: any, outputFolder: string, componentPath: string, onOutput) => {
+export const extractapi = (
+  dtsFilePaths: any,
+  outputFolder: string,
+  componentPath: string,
+  onOutput,
+  reportOutputPath: string
+) => {
   const apiExtractorJsonPath: string = path.join(__dirname, '../config/api-extractor.json'); // Due to a Bug
   const componentName = path.basename(componentPath);
   const packageJsonFullPath = path.join(__dirname, '../config/_package.json'); // Due to a Bug
 
-  // TODO output folter
+  // output folter
   const apiJsonFilePath = path.join(outputFolder, componentName, `${componentName}.api.json`);
   const tsdocMetadataFilePath = path.join(outputFolder, componentName, `tsdoc-metadata.json`);
 
@@ -22,8 +28,14 @@ export const extractapi = (dtsFilePaths: any, outputFolder: string, componentPat
   configFile.docModel.apiJsonFilePath = apiJsonFilePath;
   configFile.tsdocMetadata.tsdocMetadataFilePath = tsdocMetadataFilePath;
 
-  // TODO after the api-extractor bug fixe - Configure messaging level.
+  if (reportOutputPath) {
+    configFile.apiReport.enabled = true;
+    configFile.apiReport.reportFileName = `${componentName}.api.md`;
+    configFile.apiReport.reportFolder = reportOutputPath;
+    configFile.apiReport.reportTempFolder = reportOutputPath;
+  }
 
+  // TODO after the api-extractor bug fixe - Configure messaging level.
   const extractorConfigPrepareOptions: IExtractorConfigPrepareOptions = {
     configObject: configFile,
     configObjectFullPath: apiExtractorJsonPath,

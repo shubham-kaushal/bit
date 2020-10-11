@@ -77,7 +77,7 @@ export class ApiExtractorMain {
     return res;
   }
 
-  public async generateDocs(onOutput: (e, msg) => void) {
+  public async generateDocs(onOutput: (e, msg) => void, reportOutputPath) {
     // getComponentsDirectory
     const componentsList = await this.workspace.list();
     const componentsPathsList = componentsList.map((comp) => this.workspace.componentDir(comp.id));
@@ -94,7 +94,13 @@ export class ApiExtractorMain {
 
     // Extracting API from DTS files
     const apiOutputPathArray = dtsCreationOutputPathArray.map((dtsPath) =>
-      extractapi(path.join(dtsPath.dtsOutputFolder, 'index.d.ts'), tempDtsOutputFolder, dtsPath.componentPath, onOutput)
+      extractapi(
+        path.join(dtsPath.dtsOutputFolder, 'index.d.ts'),
+        tempDtsOutputFolder,
+        dtsPath.componentPath,
+        onOutput,
+        reportOutputPath
+      )
     );
 
     const res = apiOutputPathArray.map((paths) => ({

@@ -18,6 +18,7 @@ export class DocCmd implements Command {
   options = [
     ['p', 'path <file>/"<file>,<file>"', 'path to the root file'],
     ['v', 'verbose', 'showing verbose output for inspection and prints stack trace'],
+    ['r', 'report <file>/"<file>,<file>"', 'markdown report output path'],
   ] as CommandOptions;
 
   constructor(
@@ -38,10 +39,10 @@ export class DocCmd implements Command {
 
   async render(
     [uiRootName, userPattern]: [string, string],
-    { path, verbose }: { path: string; verbose: boolean }
+    { path, verbose, report }: { path: string; verbose: boolean; report: string }
   ): Promise<React.ReactElement> {
     this.logger.off();
-    this.apiExtractor.generateDocs(this.gatOnOutput(!!verbose));
+    this.apiExtractor.generateDocs(this.gatOnOutput(!!verbose), report);
 
     return (
       <>
