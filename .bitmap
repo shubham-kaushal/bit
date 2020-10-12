@@ -39,6 +39,11 @@
                 "name": "_package.json"
             },
             {
+                "relativePath": "config/api-extractor.json",
+                "test": false,
+                "name": "api-extractor.json"
+            },
+            {
                 "relativePath": "doc.cmd.tsx",
                 "test": false,
                 "name": "doc.cmd.tsx"
@@ -72,6 +77,11 @@
                 "relativePath": "utils/dts-files.ts",
                 "test": false,
                 "name": "dts-files.ts"
+            },
+            {
+                "relativePath": "utils/fix-for-dts.ts",
+                "test": false,
+                "name": "fix-for-dts.ts"
             },
             {
                 "relativePath": "utils/index.ts",
