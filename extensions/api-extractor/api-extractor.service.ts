@@ -9,14 +9,16 @@ import { Workspace } from '@teambit/workspace';
 // import { TesterOptions } from './tester.main.runtime';
 // import { detectTestFiles } from './utils';
 
-export class ApiExtractorService implements EnvService<Tests> {
+// export class ApiExtractorService implements EnvService<null> {
+export class ApiExtractorService {
   constructor(
     readonly workspace: Workspace,
 
     private logger: Logger
   ) {}
 
-  async run(context: ExecutionContext, options: TesterOptions): Promise<Tests> {
+  // async run(context: ExecutionContext, options: TesterOptions): Promise<Tests> {
+  async run() {
     // const tester: Tester = context.env.getTester();
     // const specFiles = ComponentMap.as(context.components, detectTestFiles);
     // const testCount = specFiles.toArray().reduce((acc, [, specs]) => acc + specs.length, 0);

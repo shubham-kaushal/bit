@@ -8,11 +8,13 @@ import { ComponentMap } from '@teambit/component';
 /**
  * tester build task. Allows to test components during component build.
  */
-export class ApiExtractorTask implements BuildTask {
+// export class ApiExtractorTask implements BuildTask {
+export class ApiExtractorTask {
   readonly description = 'test components';
   constructor(readonly id: string) {}
 
-  async execute(context: BuildContext): Promise<BuiltTaskResult> {
+  // async execute(context: BuildContext): Promise<BuiltTaskResult> {
+  async execute(context: BuildContext) {
     //   const tester: Tester = context.env.getTester();
     //   const componentsSpecFiles = ComponentMap.as(context.components, detectTestFiles);
     //   const testCount = componentsSpecFiles.toArray().reduce((acc, [, specs]) => acc + specs.length, 0);

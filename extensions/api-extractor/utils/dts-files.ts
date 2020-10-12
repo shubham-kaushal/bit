@@ -7,14 +7,22 @@ const CompilerOptionsBase: ts.CompilerOptions = {
   moduleResolution: ts.ModuleResolutionKind.NodeJs,
   module: ts.ModuleKind.CommonJS,
   target: ts.ScriptTarget.ES2015,
-  resolveJsonModule: true,
-  esModuleInterop: true,
+  resolveJsonModule: true, //?
+  esModuleInterop: true, // to false
   emitDeclarationOnly: true,
   declaration: true,
   sourceMap: true,
   declarationMap: true,
   noEmitOnError: false,
-  lib: ['es5'],
+  lib: ['DOM', 'ES5', 'ScriptHost'],
+  // listEmittedFiles: true
+  //suppressExcessPropertyErrors: true
+  //isolatedModules: true
+
+  // paths: {
+  //   // "graphql-compose": ["node_modules/graphql-compose/"]
+  //   "@teambit/*": ["node_modules/@teambit/"]
+  // },
 };
 
 export const createDtsFile = (
