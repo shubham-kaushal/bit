@@ -1,7 +1,5 @@
 'use strict';
-require('ts-node').register();
-require('ts-node/register');
-const readline = require('readline');
+
 import fs from 'fs-extra';
 
 const getFileLines = (path: string) => {
