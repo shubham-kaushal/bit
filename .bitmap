@@ -64,11 +64,6 @@
                 "name": "JSONC.ts"
             },
             {
-                "relativePath": "utils/api-extractor copy.ts",
-                "test": false,
-                "name": "api-extractor copy.ts"
-            },
-            {
                 "relativePath": "utils/api-extractor.ts",
                 "test": false,
                 "name": "api-extractor.ts"
