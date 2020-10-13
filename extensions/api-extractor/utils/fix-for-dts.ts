@@ -1,10 +1,15 @@
+/**
+ * This is a temporary script to fix a bug in DTS file creation => API extraction toolchain.
+ * See: https://github.com/microsoft/TypeScript/issues/26718
+ */
 'use strict';
 
 import fs from 'fs-extra';
+import glob from 'glob';
+import * as path from 'path';
 
 const getFileLines = (path: string) => {
   const lines = fs.readFileSync(path, 'utf-8').split('\n');
-  // .filter(Boolean);
   return lines;
 };
 
@@ -68,10 +73,22 @@ const mergeLines = (properLines, additionalLines) => {
   return [...splitedLines.openLines, ...additionalLines, ...splitedLines.closingLines];
 };
 
-export const fixeDSTfile = (filePath: string) => {
+// Public
+
+export const fixeDTSfile = (filePath: string) => {
   const lines = getFileLines(filePath);
   const properLines = lines.map((line) => fixedOrReturnLine(line));
   const additionalLines = lines.filter((line) => !isValidLine(line)).map((line) => getAdditionalLine(line));
 
   replaceFile(filePath, mergeLines(properLines, additionalLines).join('\n'));
+};
+
+export const fixeDTSfilesInDir = (dtsFolder: string) => {
+  const dtsFilesPathArray = glob
+    .sync('**/*.d.ts', { cwd: dtsFolder, nodir: true })
+    .map((file) => path.join(dtsFolder, file));
+
+  dtsFilesPathArray.forEach((filePath) => {
+    fixeDTSfile(filePath);
+  });
 };

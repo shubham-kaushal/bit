@@ -49,6 +49,11 @@
                 "name": "doc.cmd.tsx"
             },
             {
+                "relativePath": "generate-docs.ts",
+                "test": false,
+                "name": "generate-docs.ts"
+            },
+            {
                 "relativePath": "index.ts",
                 "test": false,
                 "name": "index.ts"
@@ -57,6 +62,11 @@
                 "relativePath": "utils/JSONC.ts",
                 "test": false,
                 "name": "JSONC.ts"
+            },
+            {
+                "relativePath": "utils/api-extractor copy.ts",
+                "test": false,
+                "name": "api-extractor copy.ts"
             },
             {
                 "relativePath": "utils/api-extractor.ts",

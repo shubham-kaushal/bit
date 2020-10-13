@@ -9,7 +9,7 @@ export function apiExtractorSchema(apiExtractor: ApiExtractorMain): Schema {
   return {
     typeDefs: gql`
       extend type ComponentHost {
-        getDoc(id: String!): [ApiDocJson]
+        getDoc(id: String!): ApiDocJson
       }
 
       type ApiDocJson {
@@ -82,9 +82,9 @@ export function apiExtractorSchema(apiExtractor: ApiExtractorMain): Schema {
       ComponentHost: {
         getDoc: async (host: ComponentFactory, { id }: { id: string }) => {
           const componentId = await host.resolveComponentId(id);
-          const testsResults = apiExtractor.generateComponentDocsByComponentID(componentId);
-          if (!testsResults) return null;
-          return testsResults;
+          const docsResults = apiExtractor.generateComponentDocsByComponentID(componentId);
+          if (!docsResults) return null;
+          return docsResults;
         },
       },
     },

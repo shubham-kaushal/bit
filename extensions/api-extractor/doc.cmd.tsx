@@ -42,7 +42,7 @@ export class DocCmd implements Command {
     { path, verbose, report }: { path: string; verbose: boolean; report: string }
   ): Promise<React.ReactElement> {
     this.logger.off();
-    this.apiExtractor.generateDocs(this.gatOnOutput(!!verbose), report);
+    this.apiExtractor.generateDocsForWorkspace(this.gatOnOutput(!!verbose), report);
 
     return (
       <>

@@ -1,4 +1,3 @@
-import * as path from 'path';
 import ts from 'typescript';
 
 const CompilerOptionsBase: ts.CompilerOptions = {
@@ -15,28 +14,17 @@ const CompilerOptionsBase: ts.CompilerOptions = {
   declarationMap: true,
   noEmitOnError: false,
   lib: ['DOM', 'ES5', 'ScriptHost'],
-  // listEmittedFiles: true
-  //suppressExcessPropertyErrors: true
-  //isolatedModules: true
-
-  // paths: {
-  //   // "graphql-compose": ["node_modules/graphql-compose/"]
-  //   "@teambit/*": ["node_modules/@teambit/"]
-  // },
 };
 
 export const createDtsFile = (
-  componentPath: string,
-  rootFileName: string = 'index.ts',
-  dtsOutputFolder: string,
+  componentRootFilePath: string,
+  dtsOutputFolderPath: string,
   onOutput: (e, msg: string) => void
 ) => {
-  const rootFilePath = path.join(componentPath, rootFileName);
-
   let compilerOptions = CompilerOptionsBase;
-  compilerOptions.outDir = dtsOutputFolder;
+  compilerOptions.outDir = dtsOutputFolderPath;
 
-  let program = ts.createProgram([rootFilePath], compilerOptions);
+  let program = ts.createProgram([componentRootFilePath], compilerOptions);
   let emitResult = program.emit();
 
   let allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
@@ -52,8 +40,7 @@ export const createDtsFile = (
   });
 
   return {
-    rootFilePath,
-    componentPath,
-    dtsOutputFolder,
+    componentRootFilePath,
+    dtsOutputFolderPath,
   };
 };

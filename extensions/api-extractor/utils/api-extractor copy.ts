@@ -7,42 +7,40 @@ import {
   ExtractorLogLevel,
 } from '@microsoft/api-extractor';
 
-export type ExtractApiFormDTSFilesOptions = {
-  rootDtsFilePaths: string;
-  componentDirPath: string;
-  outputDirPath: string;
-  onOutput: (e, msg) => void;
-  generateMarkdownReports: boolean;
-};
-
-export const extractApiFromComponentDTSFiles = (options: ExtractApiFormDTSFilesOptions) => {
+export const extractapi = (
+  dtsFilePaths: any,
+  outputFolder: string,
+  componentPath: string,
+  onOutput,
+  reportOutputPath?: string
+) => {
   const apiExtractorJsonPath: string = path.join(__dirname, '../config/api-extractor.json'); // Due to a Bug
-  const packageJsonPath = path.join(__dirname, '../config/_package.json'); // Due to a Bug
-  const componentName = path.basename(options.componentDirPath);
+  const componentName = path.basename(componentPath);
+  const packageJsonFullPath = path.join(__dirname, '../config/_package.json'); // Due to a Bug
 
-  // output files paths
-  const apiJsonFilePath = path.join(options.outputDirPath, `${componentName}.api.json`);
-  const tsdocMetadataFilePath = path.join(options.outputDirPath, `tsdoc-metadata.json`);
+  // Output folter
+  const apiJsonFilePath = path.join(outputFolder, componentName, `${componentName}.api.json`);
+  const tsdocMetadataFilePath = path.join(outputFolder, componentName, `tsdoc-metadata.json`);
 
   // Load Api-Extractor configurations
   let configFile = ExtractorConfig.loadFile(apiExtractorJsonPath);
-  configFile.mainEntryPointFilePath = options.rootDtsFilePaths;
+  configFile.mainEntryPointFilePath = dtsFilePaths;
   configFile.docModel.apiJsonFilePath = apiJsonFilePath;
   configFile.tsdocMetadata.tsdocMetadataFilePath = tsdocMetadataFilePath;
 
-  if (options.generateMarkdownReports) {
+  if (reportOutputPath) {
     configFile.apiReport.enabled = true;
     configFile.apiReport.reportFileName = `${componentName}.api.md`;
-    configFile.apiReport.reportFolder = options.outputDirPath;
-    configFile.apiReport.reportTempFolder = options.outputDirPath;
+    configFile.apiReport.reportFolder = reportOutputPath;
+    configFile.apiReport.reportTempFolder = reportOutputPath;
   }
 
   // TODO after the api-extractor bug fixe - Configure messaging level.
   const extractorConfigPrepareOptions: IExtractorConfigPrepareOptions = {
     configObject: configFile,
     configObjectFullPath: apiExtractorJsonPath,
-    packageJsonFullPath: packageJsonPath,
-    projectFolderLookupToken: options.componentDirPath,
+    packageJsonFullPath: packageJsonFullPath,
+    projectFolderLookupToken: componentPath,
   };
 
   let extractorConfig: ExtractorConfig = ExtractorConfig.prepare(extractorConfigPrepareOptions);
@@ -54,12 +52,12 @@ export const extractApiFromComponentDTSFiles = (options: ExtractApiFormDTSFilesO
   });
 
   if (extractorResult.succeeded) {
-    options.onOutput(null, `API Extractor completed successfully`);
+    onOutput(null, `API Extractor completed successfully`);
   } else {
     const msg =
       `API Extractor completed with ${extractorResult.errorCount} errors` +
       ` and ${extractorResult.warningCount} warnings`;
-    options.onOutput(extractorResult, msg);
+    onOutput(extractorResult, msg);
   }
 
   return {
