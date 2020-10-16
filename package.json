@@ -188,6 +188,7 @@
     "symlink-or-copy": "^1.3.1",
     "table": "^5.2.3",
     "tar-stream": "^2.0.1",
+    "ts-node": "^9.0.0",
     "tsyringe": "^4.0.1",
     "tty-table": "^2.8.12",
     "uid-number": "0.0.6",

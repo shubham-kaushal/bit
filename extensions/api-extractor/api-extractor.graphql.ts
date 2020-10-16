@@ -1,4 +1,4 @@
-import { ComponentFactory } from '@teambit/component';
+import { Component } from '@teambit/component';
 import { Schema } from '@teambit/graphql';
 
 import gql from 'graphql-tag';
@@ -8,7 +8,7 @@ import { ApiExtractorMain } from './api-extractor.main.runtime';
 export function apiExtractorSchema(apiExtractor: ApiExtractorMain): Schema {
   return {
     typeDefs: gql`
-      extend type ComponentHost {
+      extend type Component {
         getDoc(id: String!): ApiDocJson
       }
 
@@ -79,12 +79,15 @@ export function apiExtractorSchema(apiExtractor: ApiExtractorMain): Schema {
       }
     `,
     resolvers: {
-      ComponentHost: {
-        getDoc: async (host: ComponentFactory, { id }: { id: string }) => {
-          const componentId = await host.resolveComponentId(id);
-          const docsResults = apiExtractor.generateComponentDocsByComponentID(componentId);
-          if (!docsResults) return null;
-          return docsResults;
+      Component: {
+        getDoc: async (component: Component) => {
+          const doc = await apiExtractor.getDocs(component);
+          return doc;
+          // return compositions.getCompositions(component);
+          // const componentId = await host.resolveComponentId(id);
+          // const docsResults = apiExtractor.generateComponentDocsByComponentID(componentId);
+          // if (!docsResults) return null;
+          // return docsResults;
         },
       },
     },
