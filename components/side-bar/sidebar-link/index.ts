@@ -1,1 +1,1 @@
-export { SidebarLink } from './sidebar-link';
+export { SidebarLink, SidebarLinkProps } from './sidebar-link';

@@ -1,7 +1,7 @@
 import { SplitPane, Pane, Layout } from '@teambit/base-ui.surfaces.split-pane.split-pane';
 import { RouteSlot, SlotRouter } from '@teambit/react-router';
 import { Corner } from '@teambit/staged-components.corner';
-import { Collapser } from '@teambit/staged-components.side-bar';
+import { Collapser, OverviewLink } from '@teambit/staged-components.side-bar';
 import { HoverSplitter } from '@teambit/base-ui.surfaces.split-pane.hover-splitter';
 import { TopBar } from '@teambit/staged-components.top-bar';
 import { FullLoader } from 'bit-bin/dist/to-eject/full-loader';
@@ -37,7 +37,10 @@ export function Scope({ routeSlot, menuSlot, sidebar, scopeUi, badgeSlot, contex
   scopeUi.setComponents(scope.components);
   const defaultContext = ({ children }) => <div>{children}</div>;
   const Context = context || defaultContext;
-
+  const overviewLinks = [
+    { icon: 'comps', children: 'Overview', href: '/' },
+    { icon: 'settings', children: 'Settings', href: '/settings' },
+  ];
   return (
     <ScopeProvider scope={scope}>
       <Context scope={scope}>
@@ -49,7 +52,10 @@ export function Scope({ routeSlot, menuSlot, sidebar, scopeUi, badgeSlot, contex
           />
 
           <SplitPane className={styles.main} size={264} layout={sidebarOpenness}>
-            <Pane className={styles.sidebar}>{sidebar}</Pane>
+            <Pane className={styles.sidebar}>
+              <OverviewLink links={overviewLinks} />
+              {sidebar}
+            </Pane>
             <HoverSplitter className={styles.splitter}>
               <Collapser
                 id="scopeSidebarCollapser"

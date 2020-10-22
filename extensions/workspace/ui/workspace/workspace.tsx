@@ -3,7 +3,7 @@ import 'reset-css';
 import { SplitPane, Pane, Layout } from '@teambit/base-ui.surfaces.split-pane.split-pane';
 import { RouteSlot, SlotRouter } from '@teambit/react-router';
 import { Corner } from '@teambit/staged-components.corner';
-import { Collapser } from '@teambit/staged-components.side-bar';
+import { Collapser, OverviewLink } from '@teambit/staged-components.side-bar';
 import { HoverSplitter } from '@teambit/base-ui.surfaces.split-pane.hover-splitter';
 import { TopBar } from '@teambit/staged-components.top-bar';
 import { FullLoader } from 'bit-bin/dist/to-eject/full-loader';
@@ -15,7 +15,6 @@ import { WorkspaceOverview } from './workspace-overview';
 import { WorkspaceProvider } from './workspace-provider';
 import styles from './workspace.module.scss';
 import WorkspaceUI from '../../workspace.ui.runtime';
-import { OverviewLink } from '@teambit/staged-components.side-bar';
 
 export type WorkspaceProps = {
   routeSlot: RouteSlot;
@@ -32,7 +31,7 @@ export function Workspace({ routeSlot, menuSlot, sidebar, workspaceUI }: Workspa
 
   const [isSidebarOpen, handleSidebarToggle] = useReducer((x) => !x, true);
   const sidebarOpenness = isSidebarOpen ? Layout.row : Layout.right;
-
+  const overviewLinks = [{ icon: 'comps', children: 'Overview', href: '/' }];
   if (!workspace) {
     return (
       <div className={styles.emptyContainer}>
@@ -54,7 +53,7 @@ export function Workspace({ routeSlot, menuSlot, sidebar, workspaceUI }: Workspa
 
         <SplitPane className={styles.main} size={264} layout={sidebarOpenness}>
           <Pane className={styles.sidebar}>
-            <OverviewLink />
+            <OverviewLink links={overviewLinks} />
             {sidebar}
           </Pane>
           <HoverSplitter className={styles.splitter}>

@@ -1,1 +1,1 @@
-export * from './overview-link';
+export { OverviewLink, OverviewLinkProps } from './overview-link';
