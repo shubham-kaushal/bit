@@ -1,6 +1,7 @@
-import ts from 'typescript';
+import ts, { isMethodDeclaration, isVariableStatement, SourceFile, VariableStatement } from 'typescript';
 import fs from 'fs';
 import path from 'path';
+import { serialize } from 'v8';
 
 interface DocEntry {
   name?: string;
@@ -8,6 +9,7 @@ interface DocEntry {
   documentation?: string;
   type?: string;
   constructors?: DocEntry[];
+  methods?: DocEntry[][]; //my
   parameters?: DocEntry[];
   returnType?: string;
 }
@@ -16,6 +18,7 @@ interface DocEntry {
 function generateDocumentation(fileNames: string[], outDir: string, options: ts.CompilerOptions): void {
   // Build a program using the set of root file names in fileNames
   let program = ts.createProgram(fileNames, options);
+  //   const _ts = ts;
 
   // Get the checker, we will use it to find more about classes
   let checker = program.getTypeChecker();
@@ -41,6 +44,7 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
       return;
     }
 
+    //is class
     if (ts.isClassDeclaration(node) && node.name) {
       // This is a top level class, get its symbol
       let symbol = checker.getSymbolAtLocation(node.name);
@@ -49,7 +53,11 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
       }
       // No need to walk any further, class expressions/inner declarations
       // cannot be exported
-    } else if (ts.isModuleDeclaration(node)) {
+    }
+
+    //is node
+    else if (ts.isModuleDeclaration(node)) {
+      //is node
       // This is a namespace, visit its children
       ts.forEachChild(node, visit);
     }
@@ -64,18 +72,38 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
     };
   }
 
+  function isMembersMethodDeclaration(member) {
+    return member.declarations.some(isMethodDeclaration);
+  }
+
   /** Serialize a class symbol information */
   function serializeClass(symbol: ts.Symbol) {
     let details = serializeSymbol(symbol);
 
     // Get the construct signatures
-    let constructorType = checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!);
+    const constructorType = checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!);
     details.constructors = constructorType.getConstructSignatures().map(serializeSignature);
+
+    // const _ts = ts;
+    // Get the functions signatures
+    const members: Array<any> = [];
+    symbol.members?.forEach((m) => members.push(m));
+    // const methods = members.filter(isMembersMethodDeclaration);
+    details.methods = [];
+
+    // const methodsSignatures = memberType.getCallSignatures().filter(signature => signature?.declaration.kind === ts.SyntaxKind.ModuleDeclaration).map(serializeSignature);
+    members.filter(isMembersMethodDeclaration).forEach((member) => {
+      const memberType = checker.getTypeOfSymbolAtLocation(member, member.valueDeclaration);
+      const methodsSignatures = memberType.getCallSignatures().map(serializeSignature);
+      details.methods!.push(methodsSignatures);
+    });
+
     return details;
   }
 
   /** Serialize a signature (call or construct) */
   function serializeSignature(signature: ts.Signature) {
+    const _ts = ts;
     return {
       parameters: signature.parameters.map(serializeSymbol),
       returnType: checker.typeToString(signature.getReturnType()),
@@ -95,6 +123,7 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
 // =================================================================
 const inputFiles = [
   '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/schema-extractor/utils/input/aspect.main.runtime.ts',
+  '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/aspect/core-exporter.task.ts',
 ];
 const outputDir = '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/schema-extractor/utils/output';
 
