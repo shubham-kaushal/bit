@@ -15,6 +15,7 @@ import { WorkspaceOverview } from './workspace-overview';
 import { WorkspaceProvider } from './workspace-provider';
 import styles from './workspace.module.scss';
 import WorkspaceUI from '../../workspace.ui.runtime';
+import { OverviewLink } from '@teambit/staged-components.side-bar';
 
 export type WorkspaceProps = {
   routeSlot: RouteSlot;
@@ -52,7 +53,10 @@ export function Workspace({ routeSlot, menuSlot, sidebar, workspaceUI }: Workspa
         />
 
         <SplitPane className={styles.main} size={264} layout={sidebarOpenness}>
-          <Pane className={styles.sidebar}>{sidebar}</Pane>
+          <Pane className={styles.sidebar}>
+            <OverviewLink />
+            {sidebar}
+          </Pane>
           <HoverSplitter className={styles.splitter}>
             <Collapser
               id="workspaceSidebarCollapser"
