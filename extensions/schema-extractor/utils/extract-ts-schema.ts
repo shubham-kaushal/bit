@@ -13,6 +13,7 @@ interface DocEntry {
   name?: string;
   fileName?: string;
   documentation?: string;
+  modifiers?: string[];
   type?: string;
   constructors?: DocEntry[];
   methods?: DocEntry[][]; //my
@@ -80,7 +81,12 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
 
   /** Serialize a class symbol information */
   function serializeClass(symbol: ts.Symbol) {
+    const _ts = ts;
     let details = serializeSymbol(symbol);
+    // details.modifiers = symbol.declarations[0].modifiers
+    // details.modifiers = symbol.declarations
+    //   .reduce(((declaration, allModifiers) => ([...declaration.modifiers, ...allModifiers])), [])
+    //   .map(modifier => ts.SyntaxKind[modifier.kind]) || undefined;
 
     // Get the construct signatures
     const constructorType = checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!);
@@ -101,10 +107,11 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
   }
 
   function serializeSignature(signature: ts.Signature) {
-    // const _ts = ts;
     return {
       documentation: ts.displayPartsToString(signature.getDocumentationComment(checker)),
       name: (signature?.declaration as any)?.name?.escapedText || undefined,
+      modifiers:
+        (signature?.declaration as any)?.modifiers?.map((modifier) => ts.SyntaxKind[modifier.kind]) || undefined,
       parameters: signature.parameters.map(serializeSymbol),
       returnType: checker.typeToString(signature.getReturnType()),
     };
@@ -131,10 +138,6 @@ const inputFiles = [
 ];
 const outputDir = '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/schema-extractor/utils/output';
 
-// generateDocumentation(process.argv.slice(2), {
-//   target: ts.ScriptTarget.ES5,
-//   module: ts.ModuleKind.CommonJS
-// });
 generateDocumentation(inputFiles, outputDir, {
   target: ts.ScriptTarget.ES5,
   module: ts.ModuleKind.CommonJS,
