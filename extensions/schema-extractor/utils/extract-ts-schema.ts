@@ -1,4 +1,10 @@
-import ts, { isMethodDeclaration, isVariableStatement, SourceFile, VariableStatement } from 'typescript';
+import ts, {
+  isMethodDeclaration,
+  NamedDeclaration,
+  isVariableStatement,
+  SourceFile,
+  VariableStatement,
+} from 'typescript';
 import fs from 'fs';
 import path from 'path';
 import { serialize } from 'v8';
@@ -72,10 +78,6 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
     };
   }
 
-  function isMembersMethodDeclaration(member) {
-    return member.declarations.some(isMethodDeclaration);
-  }
-
   /** Serialize a class symbol information */
   function serializeClass(symbol: ts.Symbol) {
     let details = serializeSymbol(symbol);
@@ -84,14 +86,11 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
     const constructorType = checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!);
     details.constructors = constructorType.getConstructSignatures().map(serializeSignature);
 
-    // const _ts = ts;
-    // Get the functions signatures
+    // Get the methods signatures
     const members: Array<any> = [];
     symbol.members?.forEach((m) => members.push(m));
-    // const methods = members.filter(isMembersMethodDeclaration);
     details.methods = [];
 
-    // const methodsSignatures = memberType.getCallSignatures().filter(signature => signature?.declaration.kind === ts.SyntaxKind.ModuleDeclaration).map(serializeSignature);
     members.filter(isMembersMethodDeclaration).forEach((member) => {
       const memberType = checker.getTypeOfSymbolAtLocation(member, member.valueDeclaration);
       const methodsSignatures = memberType.getCallSignatures().map(serializeSignature);
@@ -101,13 +100,13 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
     return details;
   }
 
-  /** Serialize a signature (call or construct) */
   function serializeSignature(signature: ts.Signature) {
-    const _ts = ts;
+    // const _ts = ts;
     return {
+      documentation: ts.displayPartsToString(signature.getDocumentationComment(checker)),
+      name: (signature?.declaration as any)?.name?.escapedText || undefined,
       parameters: signature.parameters.map(serializeSymbol),
       returnType: checker.typeToString(signature.getReturnType()),
-      documentation: ts.displayPartsToString(signature.getDocumentationComment(checker)),
     };
   }
 
@@ -118,6 +117,11 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
       (!!node.parent && node.parent.kind === ts.SyntaxKind.SourceFile)
     );
   }
+}
+
+// utils
+function isMembersMethodDeclaration(member) {
+  return member.declarations.some(isMethodDeclaration);
 }
 
 // =================================================================
