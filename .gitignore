@@ -92,3 +92,5 @@ bin/bit
 # package managers
 pnpm-lock.yaml
 yarn.lock
+extensions/schema-extractor/utils/output
+extensions/schema-extractor/utils/input
