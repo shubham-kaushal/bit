@@ -4416,6 +4416,21 @@
                 "test": false
             },
             {
+                "name": "index.ts",
+                "relativePath": "sidebar-link/index.ts",
+                "test": false
+            },
+            {
+                "name": "sidebar-link.module.scss",
+                "relativePath": "sidebar-link/sidebar-link.module.scss",
+                "test": false
+            },
+            {
+                "name": "sidebar-link.tsx",
+                "relativePath": "sidebar-link/sidebar-link.tsx",
+                "test": false
+            },
+            {
                 "name": "styles.module.scss",
                 "relativePath": "styles.module.scss",
                 "test": false
