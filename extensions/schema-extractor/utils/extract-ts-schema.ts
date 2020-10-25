@@ -15,6 +15,8 @@ interface DocEntry {
   documentation?: string;
   modifiers?: string[];
   type?: string;
+  kind?: string;
+  heritages?: DocEntry[];
   constructors?: DocEntry[];
   methods?: DocEntry[][]; //my
   parameters?: DocEntry[];
@@ -62,6 +64,10 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
       // cannot be exported
     }
 
+    //is interface
+    if (ts.isInterfaceDeclaration(node) && node.name) {
+    }
+
     //is node
     else if (ts.isModuleDeclaration(node)) {
       //is node
@@ -83,10 +89,19 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
   function serializeClass(symbol: ts.Symbol) {
     const _ts = ts;
     let details = serializeSymbol(symbol);
-    // details.modifiers = symbol.declarations[0].modifiers
-    // details.modifiers = symbol.declarations
-    //   .reduce(((declaration, allModifiers) => ([...declaration.modifiers, ...allModifiers])), [])
-    //   .map(modifier => ts.SyntaxKind[modifier.kind]) || undefined;
+
+    details.kind = 'class'; //????
+
+    // heritage
+    details.heritages = symbol.declarations
+      .map((declaration) => {
+        return (declaration as any).heritageClauses?.map((heritageClause) => ({
+          kind: ts.SyntaxKind[heritageClause.token],
+          parents: heritageClause.types.map((type) => type.getText()),
+          // parent: heritageClause.types[0].getText()
+        }));
+      })
+      .reduce((accArr, arr) => accArr.concat(arr), []);
 
     // Get the construct signatures
     const constructorType = checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!);
@@ -100,6 +115,7 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
     members.filter(isMembersMethodDeclaration).forEach((member) => {
       const memberType = checker.getTypeOfSymbolAtLocation(member, member.valueDeclaration);
       const methodsSignatures = memberType.getCallSignatures().map(serializeSignature);
+
       details.methods!.push(methodsSignatures);
     });
 
@@ -107,6 +123,12 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
   }
 
   function serializeSignature(signature: ts.Signature) {
+    const sourceFile = signature.declaration?.getSourceFile();
+    const { line, character } = sourceFile?.getLineAndCharacterOfPosition(signature.declaration?.getStart()!) || {
+      line: 'NaN',
+      character: 'NaN',
+    };
+
     return {
       documentation: ts.displayPartsToString(signature.getDocumentationComment(checker)),
       name: (signature?.declaration as any)?.name?.escapedText || undefined,
@@ -114,6 +136,12 @@ function generateDocumentation(fileNames: string[], outDir: string, options: ts.
         (signature?.declaration as any)?.modifiers?.map((modifier) => ts.SyntaxKind[modifier.kind]) || undefined,
       parameters: signature.parameters.map(serializeSymbol),
       returnType: checker.typeToString(signature.getReturnType()),
+      text: signature.declaration?.getText(),
+      location: {
+        sourceFilePath: sourceFile?.getSourceFile().fileName,
+        line,
+        character,
+      },
     };
   }
 
@@ -133,8 +161,12 @@ function isMembersMethodDeclaration(member) {
 
 // =================================================================
 const inputFiles = [
-  '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/schema-extractor/utils/input/aspect.main.runtime.ts',
-  '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/aspect/core-exporter.task.ts',
+  // '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/pubsub/index.ts',
+  // '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/scope/scope-badge.ts',
+  '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/react/index.ts',
+  '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/src/cli/commands/private-cmds/resolver-cmd.ts',
+  '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/aspect/index.ts',
+  '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/src/version/exceptions/invalid-version-change.ts',
 ];
 const outputDir = '/Users/uritalyosef/Desktop/BIT/HarminyBit/bit/extensions/schema-extractor/utils/output';
 
