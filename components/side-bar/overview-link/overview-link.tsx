@@ -8,7 +8,7 @@ export type OverviewLinkProps = {
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export function OverviewLink({ links, ...rest }: OverviewLinkProps) {
-  if (!links) return null;
+  if (!links || links.length === 0) return null;
   return (
     <div className={styles.sidebarLinkBox} {...rest}>
       {links.map((link, index) => (

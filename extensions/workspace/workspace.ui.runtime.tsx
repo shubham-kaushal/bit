@@ -5,7 +5,7 @@ import ReactRouterAspect, { RouteSlot, ReactRouterUI } from '@teambit/react-rout
 import SidebarAspect, { SidebarUI } from '@teambit/sidebar';
 import { UIAspect, UIRootUI as UIRoot, UIRuntime, UiUI } from '@teambit/ui';
 import { GraphAspect, GraphUI } from '@teambit/graph';
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { RouteProps } from 'react-router-dom';
 import CommandBarAspect, { CommandBarUI, ComponentSearcher } from '@teambit/command-bar';
 import { WorkspaceComponentsDrawer } from './workspace-components.drawer';
@@ -17,7 +17,11 @@ export type MenuItem = {
   label: JSX.Element | string | null;
 };
 
+export type SidebarLink = ComponentType;
+
 export type SidebarWidgetSlot = SlotRegistry<ComponentTreeNode>;
+
+export type SidebarLinkSlot = SlotRegistry<SidebarLink[]>;
 
 export class WorkspaceUI {
   constructor(
@@ -42,7 +46,11 @@ export class WorkspaceUI {
 
     private commandBarUI: CommandBarUI,
 
-    reactRouterUI: ReactRouterUI
+    reactRouterUI: ReactRouterUI,
+    /**
+     * sidebar links for remote workspace
+     */
+    private sidebarLinkSlot: SidebarLinkSlot
   ) {
     // TODO: @oded please never add logic in the constructor - this should be done from the provider.
     this.registerExplicitRoutes();
@@ -78,6 +86,10 @@ export class WorkspaceUI {
     this.componentSearcher.update(components);
   };
 
+  registerSidebarLink(...sidebarLinks: SidebarLink[]) {
+    this.sidebarLinkSlot.register(sidebarLinks);
+  }
+
   componentSearcher: ComponentSearcher;
 
   uiRoot(): UIRoot {
@@ -94,6 +106,7 @@ export class WorkspaceUI {
               routeSlot={this.routeSlot}
               sidebar={<this.sidebar.render />}
               workspaceUI={this}
+              sidebarLinkSlot={this.sidebarLinkSlot}
             />
           ),
         },
@@ -113,7 +126,12 @@ export class WorkspaceUI {
 
   static runtime = UIRuntime;
 
-  static slots = [Slot.withType<RouteProps>(), Slot.withType<RouteProps>(), Slot.withType<ComponentTreeNode>()];
+  static slots = [
+    Slot.withType<RouteProps>(),
+    Slot.withType<RouteProps>(),
+    Slot.withType<ComponentTreeNode>(),
+    Slot.withType<SidebarLink[]>(),
+  ];
 
   static async provider(
     [ui, componentUi, sidebar, componentTree, commandBarUI, reactRouterUI, graphUI]: [
@@ -126,7 +144,7 @@ export class WorkspaceUI {
       GraphUI
     ],
     config,
-    [routeSlot, menuSlot, sidebarSlot]: [RouteSlot, RouteSlot, SidebarWidgetSlot]
+    [routeSlot, menuSlot, sidebarSlot, sidebarLinkSlot]: [RouteSlot, RouteSlot, SidebarWidgetSlot, SidebarLinkSlot]
   ) {
     componentTree.registerTreeNode(new ComponentTreeWidget());
     sidebarSlot.register(new ComponentTreeWidget());
@@ -139,9 +157,11 @@ export class WorkspaceUI {
       sidebar,
       sidebarSlot,
       commandBarUI,
-      reactRouterUI
+      reactRouterUI,
+      sidebarLinkSlot
     );
     ui.registerRoot(workspaceUI.uiRoot.bind(workspaceUI));
+    workspaceUI.registerSidebarLink();
 
     return workspaceUI;
   }

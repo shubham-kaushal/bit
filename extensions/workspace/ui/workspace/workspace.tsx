@@ -1,5 +1,5 @@
 import 'reset-css';
-
+import { flatten } from 'lodash';
 import { SplitPane, Pane, Layout } from '@teambit/base-ui.surfaces.split-pane.split-pane';
 import { RouteSlot, SlotRouter } from '@teambit/react-router';
 import { Corner } from '@teambit/staged-components.corner';
@@ -14,19 +14,20 @@ import { useWorkspace } from './use-workspace';
 import { WorkspaceOverview } from './workspace-overview';
 import { WorkspaceProvider } from './workspace-provider';
 import styles from './workspace.module.scss';
-import WorkspaceUI from '../../workspace.ui.runtime';
+import WorkspaceUI, { SidebarLinkSlot } from '../../workspace.ui.runtime';
 
 export type WorkspaceProps = {
   routeSlot: RouteSlot;
   menuSlot: RouteSlot;
   sidebar: JSX.Element;
   workspaceUI: WorkspaceUI;
+  sidebarLinkSlot: SidebarLinkSlot;
 };
 
 /**
  * main workspace component.
  */
-export function Workspace({ routeSlot, menuSlot, sidebar, workspaceUI }: WorkspaceProps) {
+export function Workspace({ routeSlot, menuSlot, sidebar, workspaceUI, sidebarLinkSlot }: WorkspaceProps) {
   const workspace = useWorkspace();
 
   const [isSidebarOpen, handleSidebarToggle] = useReducer((x) => !x, true);
@@ -39,6 +40,9 @@ export function Workspace({ routeSlot, menuSlot, sidebar, workspaceUI }: Workspa
       </div>
     );
   }
+
+  const workspaceSidebarLinks = flatten(sidebarLinkSlot?.values()) || [];
+  console.log('workspaceSidebarLinks', workspaceSidebarLinks);
 
   workspaceUI.setComponents(workspace.components);
 
