@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import type { PubsubMain } from '@teambit/pubsub';
-import type { ExecutionContext } from '@teambit/envs';
-import type { DevServer } from '@teambit/bundler';
 
 // Import the IDs & Events
 import { BitBaseEvent } from '@teambit/pubsub';
@@ -13,28 +11,26 @@ import {
 } from '@teambit/workspace';
 import { UIAspect, UiServerStartedEvent } from '@teambit/ui';
 import { WebpackAspect, WebpackCompilationDoneEvent } from '@teambit/webpack';
-import { BundlerAspect, ComponentsServerStartedEvent, ComponentsServerStartedEventData } from '@teambit/bundler';
+import { BundlerAspect, ComponentsServerStartedEvent } from '@teambit/bundler';
 import { CompilerAspect, CompilerErrorEvent } from '@teambit/compiler';
 
 import React from 'react';
 import { Newline, Text, render } from 'ink';
 import open from 'open';
 
-import {
-  Starting,
-  ComponentPreviewServerStarted,
-  UIServersAreReadyInScope,
-  TSErrors,
-  WebpackErrors,
-  WebpackWarnings,
-  CompilingOrUIServersAreReady,
-} from './output-templates';
+import { Starting } from '@teambit/ink.starting';
+import { ComponentPreviewServerStarted } from '@teambit/ink.component-preview-server-started';
+import { UIServersAreReadyInScope } from '@teambit/ink.ui-servers-is-ready-in-scope';
+import { TSErrors } from '@teambit/ink.ts-errors';
+import { WebpackErrors } from '@teambit/ink.webpack-errors';
+import { WebpackWarnings } from '@teambit/ink.webpack-warnings';
+import { CompilingOrUIServersAreReady } from '@teambit/ink.compiling-or-ui-servers-are-ready';
 
 type CliOutputState = {
   compiledComponents: Array<any>;
-  commandFlags: object;
+  commandFlags: any;
   mainUIServer: any;
-  componentServers: Array<ComponentServer>;
+  componentServers: Array<any>;
   componentChanges: Array<any>;
   latestError: any;
   webpackErrors: Array<any>;
@@ -44,16 +40,10 @@ type CliOutputState = {
   compiling: boolean;
 };
 
-export type ComponentServer = {
-  id: string;
-  status: string;
-  serverData?: ComponentsServerStartedEventData;
-};
-
 export type CliOutputProps = {
   startingTimestamp: number;
   pubsub: PubsubMain;
-  commandFlags: Object;
+  commandFlags: any;
   uiServer: any;
 };
 
@@ -90,7 +80,8 @@ export class CliOutput extends React.Component<CliOutputProps, CliOutputState> {
   private eventsListener = (event: BitBaseEvent<any>) => {
     switch (event.type) {
       case ComponentsServerStartedEvent.TYPE:
-        this.onComponentsServerStartedEvent(event);
+        this.updateOrAddComponentServer(event.data.context.id, 'Running', event.data);
+        this.safeOpenBrowser();
         break;
       case WebpackCompilationDoneEvent.TYPE:
         this.onWebpackCompilationDone(event);
@@ -116,11 +107,6 @@ export class CliOutput extends React.Component<CliOutputProps, CliOutputState> {
       default:
     }
   };
-
-  private onComponentsServerStartedEvent(event: BitBaseEvent<ComponentsServerStartedEventData>) {
-    this.updateOrAddComponentServer(event.data.context.id, 'Running', event.data);
-    this.safeOpenBrowser();
-  }
 
   private async onUiServerStarted(event) {
     const devServers = await event.data.uiRoot.devServers;
@@ -206,24 +192,24 @@ export class CliOutput extends React.Component<CliOutputProps, CliOutputState> {
     }
   }
 
-  private updateOrAddComponentServer(id: string, status: string, serverData?: ComponentsServerStartedEventData) {
-    if (serverData) {
-      this.addOrUpdateComponentServer(id, status, serverData);
+  private updateOrAddComponentServer(id: string, status, server?) {
+    if (server) {
+      this.addOrUpdateComponentServer(id, status, server);
     } else {
       this.updateComponentServerStatus(id, status);
     }
   }
 
-  private updateComponentServerStatus(id: string, status: string) {
+  private updateComponentServerStatus(id: string, status) {
     const server = this.state.componentServers.find((cs) => cs.id === id)?.server;
     if (server) {
       this.addOrUpdateComponentServer(id, status, server);
     }
   }
 
-  private addOrUpdateComponentServer(id: string, status: string, serverData: ComponentsServerStartedEventData) {
+  private addOrUpdateComponentServer(id: string, status, server) {
     this.setState({
-      componentServers: [...this.state.componentServers.filter((cs) => cs.id !== id), { serverData, id, status }],
+      componentServers: [...this.state.componentServers.filter((cs) => cs.id !== id), { server, id, status }],
     });
   }
 

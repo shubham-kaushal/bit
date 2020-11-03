@@ -2,11 +2,11 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import { ComponentPreviewServerStartedHeaders } from '.';
 
-export type props = {
+export type ComponentPreviewServerStartedProps = {
   items: Array<any>;
 };
 
-export const ComponentPreviewServerStarted = ({ items }: props) =>
+export const ComponentPreviewServerStarted = ({ items }: ComponentPreviewServerStartedProps) =>
   !items.length ? null : (
     <>
       <ComponentPreviewServerStartedHeaders />
